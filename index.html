@@ -722,5 +722,23 @@
 </div>
 
 </div>
+
+<!-- Cross-navigation & download toolbar -->
+<div id="xnav" style="position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;gap:8px;font-family:Georgia,serif;">
+  <a href="dashboard.html" style="background:#14532d;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3);">📊 Strategic Dashboard</a>
+  <button onclick="window.print()" style="background:#166534;color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);">⬇ PDF (Print)</button>
+  <button onclick="downloadDocx()" style="background:#15803d;color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);">⬇ DOCX</button>
+</div>
+<script>
+function downloadDocx(){
+  var head='<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
+  var b=document.body.cloneNode(true);var x=b.querySelector('#xnav');if(x)x.remove();
+  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>'+head+'</head><body>'+b.innerHTML+'</body></html>';
+  var blob=new Blob(['\ufeff'+h,{type:'application/msword'}]);
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.doc';
+  document.body.appendChild(a);a.click();a.remove();
+}
+</script>
 </body>
 </html>

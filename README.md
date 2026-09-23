@@ -73,3 +73,8 @@ python3 -m http.server 8000
 - **404 "Site not found"** → Pages is not enabled yet, or the repo/branch settings are wrong (see Option A step 3).
 - **Page not updating after push** → hard-refresh (Ctrl+Shift+R); GitHub CDN can take up to ~10 minutes.
 - **Case sensitivity** → file names must match links exactly (GitHub Pages is case-sensitive).
+
+## Pages
+- `/` or `/index.html` — Ministerial Briefing report (PDF/DOCX download buttons included)
+- `/dashboard.html` — Interactive Strategic Dashboard (Burden to Bloom)
+- `/Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html` — direct link to the briefing file
