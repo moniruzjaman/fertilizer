@@ -1,80 +1,65 @@
-# 🌾 Fertilizer Management — Burden to Bloom (সার ব্যবস্থাপনা: সংকট থেকে সমৃদ্ধি)
+# Fertilizer Management — Burden to Bloom
 
-Static website (Ministry of Agriculture, Bangladesh) ready for **GitHub Pages** deployment at:
+Static GitHub Pages site for the Ministry of Agriculture, Bangladesh.
 
-👉 **https://moniruzjaman.github.io/fertilizer/**
+Live: https://moniruzjaman.github.io/fertilizer/
+
+## Add a page
+
+Drop a `.pdf` or `.html` file into `content/inbox/`, commit, and push (the GitHub web UI is enough).
+
+The build publishes:
+
+- `/<slug>/` — navigable page (in-site PDF reader or HTML)
+- `/<slug>/og.png` — 1200x630 social preview for that page
+- `/files/<slug>.pdf` — original PDF download, when applicable
+
+Optional extras in `content/pages/<slug>/`:
+
+- `meta.yaml` — title, description, date, slug, type
+- `og.png` — custom social card
+- `redirect.yaml` — `{ to: new-slug }` to keep an old URL
+
+See `content/README.md` and `docs/superpowers/specs/2026-09-23-content-inbox-pages-design.md`.
 
 ## Repository structure
 
 ```
-.
-├── index.html                       # Main site (deployed at /fertilizer/)
-├── fertilizer.html                  # Alias page → redirects to index.html (/fertilizer/fertilizer.html)
-├── Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html   # Ministerial briefing report
-├── robots.txt
-├── sitemap.xml
-├── README.md
-└── .github/
-    └── workflows/
-        └── pages.yml                # GitHub Actions workflow that publishes the site
+content/inbox/          # drop PDF or HTML here
+content/pages/<slug>/   # optional meta.yaml and og.png
+tools/site-builder/     # CI publisher
+site/                   # generated; not committed
+.github/workflows/pages.yml
 ```
 
-All assets are loaded from CDNs (Tailwind, Alpine.js, AOS, Chart.js, Lucide, Google Fonts),
-so **no build step is required** — the repository root *is* the site.
+## Local build
 
-## Deploy to GitHub Pages (one-time setup)
-
-### Option A — via GitHub UI
-1. Create a repository named **`fertilizer`** under the `moniruzjaman` account (or rename yours).
-2. Push everything in this folder to its `main` branch:
-   ```bash
-   git init            # skip if already a repo
-   git add .
-   git commit -m "Deploy fertilizer site"
-   git branch -M main
-   git remote add origin https://github.com/moniruzjaman/fertilizer.git
-   git push -u origin main --force
-   ```
-3. Go to **Settings → Pages → Build and deployment**
-   - Source: **Deploy from a branch**
-   - Branch: `main` / `/ (root)` → **Save**
-4. Wait ~1 minute, then open https://moniruzjaman.github.io/fertilizer/
-
-### Option B — via GitHub Actions (included)
-1. Push to `main` as above.
-2. In **Settings → Pages**, set Source to **GitHub Actions**.
-3. The included workflow `.github/workflows/pages.yml` deploys automatically on every push
-   (also runnable manually from the **Actions** tab → *Deploy static content to Pages* → *Run workflow*).
-
-### Using the GitHub CLI (alternative to Option A/B)
 ```bash
-gh repo create moniruzjaman/fertilizer --source=. --public --push --branch main
-gh api -X POST repos/moniruzjaman/fertilizer/pages -f "build_type=legacy" \
-   -f "source[branch]=main" -f "source[path]=/"     # enable Pages
-# or use Actions-based Pages:
-gh api -X PUT repos/moniruzjaman/fertilizer/pages -f build_type=workflow
+cd tools/site-builder
+npm ci
+npm test
+npm run build
+```
+
+Then from the repo root:
+
+```bash
+python3 -m http.server 8000 --directory site
 ```
 
 ## URL map
 
 | URL | Content |
 |---|---|
-| `/fertilizer/` and `/fertilizer/index.html` | Main site |
-| `/fertilizer/fertilizer.html` | Redirects to the main site |
-| `/fertilizer/Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html` | Ministerial briefing report |
+| `/` | Catalog of all pages |
+| `/briefing/` | Ministerial briefing |
+| `/dashboard/` | Interactive dashboard |
+| `/fertilizer.html` | Redirects to `/` |
+| `/dashboard.html` | Redirects to `/dashboard/` |
+| `/Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html` | Redirects to `/briefing/` |
 
-## Local preview
-```bash
-python3 -m http.server 8000
-# open http://localhost:8000
-```
+## Deploy
 
-## Troubleshooting
-- **404 "Site not found"** → Pages is not enabled yet, or the repo/branch settings are wrong (see Option A step 3).
-- **Page not updating after push** → hard-refresh (Ctrl+Shift+R); GitHub CDN can take up to ~10 minutes.
-- **Case sensitivity** → file names must match links exactly (GitHub Pages is case-sensitive).
+Push to `main`. GitHub Actions builds `site/` and deploys it to Pages.
 
-## Pages
-- `/` or `/index.html` — Ministerial Briefing report (PDF/DOCX download buttons included)
-- `/dashboard.html` — Interactive Strategic Dashboard (Burden to Bloom)
-- `/Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html` — direct link to the briefing file
+In **Settings → Pages**, set Source to **GitHub Actions**.

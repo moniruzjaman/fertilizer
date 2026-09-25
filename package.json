@@ -1,0 +1,9 @@
+{
+  "name": "fertilizer",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --prefix tools/site-builder",
+    "test": "npm test --prefix tools/site-builder",
+    "preview": "python3 -m http.server 8000 --directory site"
+  }
+}
