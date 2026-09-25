@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Op-Ed — From Abundant Supply to Every Farmer's Hands: Bangladesh's Path to Bloom</title>
+<style>
+:root{
+--green:#006a4e; --green-dark:#004d39; --green-deep:#003826;
+--green-tint:#e9f4f0; --green-line:#b9d8cd;
+--red:#f42a41; --red-dark:#c8121f; --red-tint:#fdecEE;
+--gold:#c8a24b;
+--ink:#1a1a1a; --ink-soft:#4a4a4a; --muted:#6f6a61;
+--paper:#faf9f5; --line:#e4ded2;
+--serif:Georgia,'Times New Roman',serif;
+--sans:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.75 var(--serif);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+p{margin:0 0 16px}
+p em{color:var(--green-dark)}
+.topred{height:6px;background:var(--red)}
+
+/* Masthead */
+.masthead{background:var(--green);color:#fff;position:relative;overflow:hidden}
+.masthead .disc{position:absolute;border-radius:50%;background:var(--red);width:300px;height:300px;left:56%;top:50%;transform:translateY(-50%);opacity:.95}
+.masthead .disc2{position:absolute;border-radius:50%;border:2px solid rgba(255,255,255,.25);width:340px;height:340px;left:55%;top:50%;transform:translateY(-50%)}
+.mast-inner{position:relative;padding:30px 0 26px}
+.mh-bn{font:600 13px/1 var(--sans);letter-spacing:.35em;opacity:.85;margin-bottom:10px}
+.mh-title{font:800 38px/1.1 var(--sans);letter-spacing:.06em}
+.mh-sub{margin-top:10px;font:600 12px/1 var(--sans);letter-spacing:.28em;opacity:.9}
+.mh-right{position:absolute;right:0;bottom:26px;text-align:right;font:600 11px/1.7 var(--sans);letter-spacing:.2em;opacity:.85}
+
+/* Headline */
+.head{padding:34px 0 0}
+.kicker{font:800 12px/1 var(--sans);letter-spacing:.24em;color:var(--green);margin-bottom:14px}
+h1{font:800 clamp(30px,4.6vw,46px)/1.16 var(--serif);letter-spacing:-.01em;margin-bottom:12px}
+.bndeck{font:600 19px/1.5 var(--sans);color:var(--green);margin-bottom:16px}
+.standfirst{font:italic 400 19px/1.6 var(--serif);color:var(--ink-soft);border-left:5px solid var(--green);padding:4px 0 4px 18px;margin-bottom:22px}
+.byline{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 2px;font:700 11.5px/1.7 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.byline .who{color:var(--green-dark)}
+.byline .dotsep{width:5px;height:5px;border-radius:50%;background:var(--red)}
+
+/* Stat strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:26px 0 8px}
+.stat{background:#fff;border:1px solid var(--line);border-top:5px solid var(--green);border-radius:6px;padding:16px 16px 13px}
+.stat.red{border-top-color:var(--red)}
+.stat.gold{border-top-color:var(--gold)}
+.stat .num{font:800 26px/1.1 var(--serif);color:var(--green-dark)}
+.stat.red .num{color:var(--red-dark)}
+.stat.gold .num{color:#8a6a25}
+.stat .lbl{font:700 10.5px/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.stat .note{font:italic 12px/1.45 var(--serif);color:var(--ink-soft);margin-top:5px}
+
+/* Sections */
+section{margin:38px 0 0}
+.shead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.shead .chip{flex:none;width:16px;height:16px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px var(--green-tint)}
+h2{font:800 25px/1.25 var(--serif);color:var(--green-deep)}
+.shead::after{content:"";flex:1;height:3px;background:linear-gradient(90deg,var(--green) 0 54px,var(--line) 54px);border-radius:2px}
+
+/* Pull quote */
+.pull{margin:28px 0;padding:8px 8px 8px 24px;border-left:6px solid var(--green)}
+.pull span{font:italic 700 24px/1.42 var(--serif);color:var(--green-dark)}
+.pull .src{display:block;margin-top:8px;font:700 10.5px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* Question box */
+.qbox{background:var(--green-tint);border:1px solid var(--green-line);border-left:7px solid var(--green);border-radius:8px;padding:20px 24px;margin:24px 0}
+.qbox .tag{font:800 10.5px/1 var(--sans);letter-spacing:.22em;color:var(--green);text-transform:uppercase}
+.qbox p{margin:10px 0 0;font-size:18.5px;line-height:1.6}
+
+/* Figures */
+.fig{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:24px 0;break-inside:avoid}
+.fig h3{font:800 13px/1.3 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--green-dark);margin-bottom:14px}
+.figcap{font:600 11px/1.6 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}
+.figrow{display:flex;flex-wrap:wrap;gap:22px;align-items:stretch}
+.figrow .half{flex:1 1 320px;min-width:280px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;font:600 12px/1 var(--sans);color:var(--ink-soft)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* Timeline */
+.timeline{margin:20px 0 4px 6px;border-left:3px solid var(--green);padding-left:22px}
+.tl{position:relative;margin-bottom:14px}
+.tl::before{content:"";position:absolute;left:-29px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--green-line)}
+.tl.key::before{background:var(--red)}
+.tl b{font:700 15px/1.4 var(--sans);color:var(--green-deep)}
+.tl p{margin:2px 0 0;font-size:14.5px;color:var(--ink-soft)}
+
+/* District pins */
+.pins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.pin{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;padding:11px 13px;font:700 13.5px/1.3 var(--sans);color:var(--ink)}
+.pin i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--green)}
+.pin.focus{border:1.5px solid var(--red);background:var(--red-tint)}
+.pin.focus small{display:block;font:700 9.5px/1.3 var(--sans);letter-spacing:.08em;color:var(--red-dark);text-transform:uppercase}
+
+/* Dual panel */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
+.panel{border-radius:10px;padding:18px 20px;border:1px solid var(--line);background:#fff}
+.panel.fact{border-top:6px solid var(--green)}
+.panel.alleg{border-top:6px solid var(--gold)}
+.panel h4{font:800 12px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+.panel.fact h4{color:var(--green-dark)}
+.panel.alleg h4{color:#8a6a25}
+.panel ul{list-style:none}
+.panel li{position:relative;padding-left:20px;margin-bottom:9px;font-size:15px;line-height:1.55}
+.panel.fact li::before{content:"";position:absolute;left:2px;top:9px;width:8px;height:8px;border-radius:50%;background:var(--green)}
+.panel.alleg li::before{content:"";position:absolute;left:2px;top:9px;width:8px;height:8px;background:var(--gold)}
+.caveat{background:var(--green-tint);border:1px dashed var(--green);border-radius:8px;padding:12px 16px;font:italic 14.5px/1.6 var(--serif);color:var(--green-dark);margin-top:14px}
+
+/* Chain */
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.node{flex:1 1 128px;background:var(--green-tint);border:1px solid var(--green-line);border-radius:8px;padding:12px 10px 11px;text-align:center;position:relative}
+.node .n{position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font:800 11px/22px var(--sans)}
+.node b{display:block;font:700 13px/1.35 var(--sans);color:var(--green-deep);margin-top:6px}
+.node small{display:block;font:italic 11px/1.4 var(--serif);color:var(--muted);margin-top:4px}
+.node.hot{background:var(--red-tint);border-color:#f3b9c0}
+.node.hot .n{background:var(--red)}
+.node.hot b{color:var(--red-dark)}
+.arw{align-self:center;color:var(--green);font:800 18px/1 var(--sans);flex:0 0 auto}
+
+/* Funnel */
+.funnel{display:flex;flex-wrap:wrap;gap:8px}
+.fstep{flex:1 1 140px;border:1px solid var(--green-line);border-top:6px solid var(--green);border-radius:8px;background:#fff;padding:12px 12px 10px}
+.fstep .t{font:800 10px/1.3 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.fstep b{display:block;font:700 13.5px/1.35 var(--sans);color:var(--ink);margin-top:6px}
+.fstep.mid{border-top-color:var(--gold);background:#faf6ec}
+.fstep.mid .t{color:#8a6a25}
+.fstep.low{border-top-color:var(--red);background:var(--red-tint)}
+.fstep.low .t{color:var(--red-dark)}
+.fnote{margin-top:14px;font:italic 15px/1.6 var(--serif);color:var(--green-dark);background:var(--green-tint);border-radius:6px;padding:12px 16px}
+
+/* Lessons */
+.lessons{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}
+.lesson{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;break-inside:avoid}
+.lesson header{background:var(--green);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:baseline}
+.lesson header b{font:800 15px/1 var(--sans);letter-spacing:.14em}
+.lesson header span{font:700 9.5px/1 var(--sans);letter-spacing:.16em;background:var(--gold);color:#3d2f0a;padding:5px 8px;border-radius:20px}
+.lesson .body{padding:15px 17px;font-size:14.5px;line-height:1.62;color:var(--ink-soft)}
+.lesson .take{margin:0 17px 15px;padding:9px 12px;background:var(--green-tint);border-left:4px solid var(--green);border-radius:4px;font:italic 700 13.5px/1.45 var(--serif);color:var(--green-dark)}
+.principles{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.pr{flex:1 1 200px;background:var(--green-deep);color:#fff;border-radius:8px;padding:13px 16px;font:700 13px/1.4 var(--sans);display:flex;gap:10px;align-items:center}
+.pr i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--red);font:800 12px/26px var(--sans);text-align:center;font-style:normal}
+
+/* Roadmap */
+.roadmap{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:8px 0}
+.rm{border:1px solid var(--green-line);border-radius:10px;background:#fff;padding:16px 18px 14px;position:relative}
+.rm .rn{position:absolute;top:-14px;left:16px;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font:800 13px/30px var(--sans);text-align:center;box-shadow:0 0 0 4px var(--paper)}
+.rm.wide{grid-column:1/-1}
+.rm b{display:block;font:800 15px/1.35 var(--sans);color:var(--green-deep);margin:8px 0 5px}
+.rm p{font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0}
+.rm .when{display:inline-block;margin-top:9px;font:800 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--red-dark);background:var(--red-tint);border-radius:20px;padding:6px 10px}
+.roi{background:var(--green);color:#fff;border-radius:10px;padding:18px 22px;margin-top:18px}
+.roi b{color:#ffe08a}
+.roi p{margin:0;font-size:14.5px;line-height:1.65}
+
+/* Checklist */
+.check{background:var(--green-deep);color:#fff;border-radius:12px;padding:26px 28px;margin:26px 0;position:relative;overflow:hidden;break-inside:avoid}
+.check .discw{position:absolute;right:-70px;top:-70px;width:220px;height:220px;border-radius:50%;background:var(--red);opacity:.9}
+.check .discw2{position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;border:2px solid rgba(255,255,255,.3)}
+.check h3{position:relative;font:800 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:#ffd7dc;margin-bottom:16px}
+.check li{position:relative;list-style:none;padding:10px 0 10px 44px;font:600 17.5px/1.45 var(--serif);border-bottom:1px solid rgba(255,255,255,.14)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"✓";position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:6px;background:var(--red);font:800 15px/28px var(--sans);text-align:center;color:#fff}
+.check p{position:relative;margin-top:14px;font:italic 14px/1.5 var(--serif);color:#cfe7de}
+
+/* Conclusion */
+.conclusion{background:var(--green);color:#fff;border-radius:14px;padding:34px 36px;margin:34px 0 10px;position:relative;overflow:hidden}
+.conclusion::after{content:"";position:absolute;right:-60px;bottom:-120px;width:260px;height:260px;border-radius:50%;background:var(--red);opacity:.92}
+.conclusion::before{content:"";position:absolute;right:-80px;bottom:-140px;width:300px;height:300px;border-radius:50%;border:2px solid rgba(255,255,255,.3)}
+.conclusion .tag{font:800 11px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;color:#ffd7dc;margin-bottom:14px}
+.conclusion p.big{position:relative;z-index:1;font:italic 700 24px/1.5 var(--serif)}
+.conclusion p.sub{position:relative;z-index:1;margin-top:14px;font-size:15.5px;color:#dff0ea;max-width:640px}
+.conclusion .motto{position:relative;z-index:1;margin-top:18px;font:800 20px/1 var(--sans);color:#ffe08a;letter-spacing:.04em}
+
+/* Signature */
+.sigbox{display:flex;flex-wrap:wrap;gap:18px;align-items:center;border-top:3px solid var(--green);margin-top:30px;padding-top:18px}
+.sigbox .avatar{flex:none;width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;font:800 20px/56px var(--sans);text-align:center;box-shadow:0 0 0 5px var(--green-tint)}
+.sigbox .who b{display:block;font:800 17px/1.3 var(--serif);color:var(--green-deep)}
+.sigbox .who span{font:600 12.5px/1.7 var(--sans);color:var(--muted);letter-spacing:.04em}
+
+/* Footer */
+footer{margin-top:44px}
+.flagbar{height:14px;background:var(--green);position:relative}
+.flagbar::after{content:"";position:absolute;left:22px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--red)}
+.foot{padding:20px 0 34px;font:600 11.5px/1.8 var(--sans);letter-spacing:.06em;color:var(--muted)}
+.foot b{color:var(--green-dark)}
+
+@media (max-width:820px){
+.stats{grid-template-columns:repeat(2,1fr)}
+.dual,.lessons,.pins,.roadmap{grid-template-columns:1fr}
+.mh-right{display:none}
+.masthead .disc{left:70%}
+}
+@media print{
+body{background:#fff}
+.fig,.check,.conclusion,.panel,.rm,.lesson{break-inside:avoid}
+}
+</style>
+
+</head>
+<body>
+
+<div class="topred"></div>
+
+<!-- ══ MASTHEAD ══ -->
+<div class="masthead">
+<div class="disc2"></div><div class="disc"></div>
+<div class="wrap mast-inner">
+<div class="mh-bn">মতামত ও বিশ্লেষণ</div>
+<div class="mh-title">OPINION &amp; ANALYSIS</div>
+<div class="mh-sub">AGRICULTURE · FOOD SECURITY · NATIONAL PROSPERITY</div>
+<div class="mh-right">FERTILISER POLICY &amp; MARKETS DESK<br>FOR EDITORIAL PUBLICATION</div>
+</div>
+</div>
+
+<!-- ══ HEADLINE ══ -->
+<div class="wrap head">
+<div class="kicker">OP-ED — A CONSTRUCTIVE AGENDA FOR FERTILISER EXCELLENCE</div>
+<h1>From Abundant Supply to Every Farmer&rsquo;s Hands: Bangladesh&rsquo;s Path to Bloom</h1>
+<div class="bndeck">প্রাচুর্য থেকে সমৃদ্ধি — সার ব্যবস্থাপনায় শেষ মাইলের সুন্দর সম্ভাবনা</div>
+<div class="standfirst">Bangladesh has already mastered the hardest part: stocks well above requirement, imports secured, and a Tk 17,001-crore annual subsidy commitment to its farmers. The next chapter — carrying national abundance that last mile to the farm gate — is a story of distribution excellence, and it is well within the country&rsquo;s reach.</div>
+<div class="byline">
+<span class="who">By Abu Md. Moniruzjaman</span><span class="dotsep"></span>
+<span>Additional Deputy Director (Horticulture), DAE Kurigram</span><span class="dotsep"></span>
+<span>31st BCS Agriculture Cadre · Dhaka</span>
+</div>
+
+<!-- ══ KEY NUMBERS ══ -->
+<div class="stats">
+<div class="stat"><div class="num">Tk 17,001 Cr</div><div class="lbl">Annual subsidy investment</div><div class="note">A standing measure of the state&rsquo;s commitment to farmers</div></div>
+<div class="stat"><div class="num">1.365M t</div><div class="lbl">Ready in national stores</div><div class="note">Plus 365,000 t of approved imports in the pipeline</div></div>
+<div class="stat gold"><div class="num">Tk 2,000–3,000 Cr</div><div class="lbl">Recoverable each year</div><div class="note">Efficiency gains that can fund the reform itself</div></div>
+<div class="stat red"><div class="num">72 : 1</div><div class="lbl">Projected pilot ROI</div><div class="note">With a target leakage rate below 5%</div></div>
+</div>
+</div>
+
+<!-- ══ BODY ══ -->
+<main class="wrap">
+
+<!-- SECTION 1 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>A Record of Strength Worth Building On</h2></div>
+<p>Bangladesh&rsquo;s fertiliser story is, first and foremost, a success story — and it deserves to be told that way. Government figures show national stocks substantially above projected requirements through the coming months, with 1.365 million tonnes already resting in government warehouses and a further 365,000 tonnes of approved imports moving through the pipeline. On any measure, the country&rsquo;s procurement machinery has proven it can secure fertiliser at scale, season after season, against the pressures of international prices, shipping logistics and foreign-exchange conditions.</p>
+<p>Behind these numbers stands something larger: a subsidy commitment of roughly <strong>Tk 17,001 crore every year</strong>. Few national budgets make so direct and so generous a promise to agriculture. It signals that fertiliser security is treated not as a commodity problem but as a food-security covenant between the state and its farmers.</p>
+<p>And yet a quiet puzzle has emerged in the field — not a crisis of supply, but an invitation to perfect the system. Farmers in some districts have stood in queues, received restricted quantities and, in places, paid more than government-fixed prices, even as warehouses stand comfortably full.</p>
+<div class="pull"><span>&ldquo;Supply is no longer our constraint — the opportunity now lies in distribution excellence, institutional integrity and precise subsidy targeting.&rdquo;</span><span class="src">— The central opportunity of this piece</span></div>
+<p>The distinction is subtle but important, and Bangladesh is far from alone in facing it: <em>national availability is not the same as farmer-level availability.</em> A fertiliser bag in a warehouse is a national asset; in a farmer&rsquo;s hands at sowing time, it becomes a harvest. The distance between the two is precisely where the next great gain in Bangladeshi agriculture lies.</p>
+</section>
+
+<!-- SECTION 2 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>The Last-Mile Opportunity: Listening to the Field</h2></div>
+<p>The recent signals from the field should be read the way a good physician reads symptoms — not as indictments, but as guidance. Farmers in parts of Kurigram, Rangpur, Dinajpur, Rajshahi, Bogura and Lalmonirhat experienced restricted availability through authorised channels this season. In Kurigram&rsquo;s Bhurungamari, frustration ran high enough that in August, hundreds of farmers reportedly broke open a dealer warehouse — a painful moment, and an unmistakable message that the system must move as fast as farmers&rsquo; needs.</p>
+<p>The proximate cause appears largely administrative and entirely fixable. The transition to the new fertiliser dealer policy — a reform designed to professionalise the network — has temporarily created vacancies and uncertainty in some areas, and dealer lifting from government supply points has softened in pockets while demand spiked with the crop calendar.</p>
+
+<div class="qbox">
+<span class="tag">The farmer&rsquo;s question — and the standard to aim for</span>
+<p>&ldquo;Can I get the required fertiliser, in the required quantity, at the government-fixed price, from an authorised seller, at the time my crop requires it?&rdquo; — Answering this question with an unbroken &ldquo;yes&rdquo; in every upazila is entirely achievable, and this piece sets out how.</p>
+</div>
+
+<div class="fig">
+<h3>How the season unfolded — and what it taught us</h3>
+<div class="timeline">
+<div class="tl"><b>Season onset</b><p>Fertiliser demand rises sharply with the crop calendar — unevenly by crop, region and production system.</p></div>
+<div class="tl"><b>Dealer-policy transition</b><p>A forward-looking reform creates temporary vacancies and adjustment friction in parts of the dealer network.</p></div>
+<div class="tl"><b>Localised retail stress</b><p>Queues and rationed sales appear in pockets even as national stocks remain comfortably above requirement.</p></div>
+<div class="tl key"><b>August — Bhurungamari, Kurigram</b><p>Frustration spills over: farmers reportedly break open a dealer warehouse. A costly lesson — and a clear mandate for faster reform.</p></div>
+<div class="tl"><b>Institutions respond</b><p>A Special Branch report (as reported by The Daily Star) examines alleged dealer–retailer collusion; the Bangladesh Fertilizer Association warns against hoarding. Investigations offer a path to clarity.</p></div>
+</div>
+<div class="figcap">All items as reported · Investigations strengthen trust when they protect the honest majority</div>
+
+<div class="pins">
+<div class="pin focus"><i></i><span>Kurigram (Bhurungamari)<small>Most acute reported stress · August incident</small></span></div>
+<div class="pin"><i></i>Rangpur</div>
+<div class="pin"><i></i>Dinajpur</div>
+<div class="pin"><i></i>Rajshahi</div>
+<div class="pin"><i></i>Bogura</div>
+<div class="pin"><i></i>Lalmonirhat</div>
+</div>
+<div class="figcap">Districts where farmer-level availability needs reinforcement</div>
+</div>
+
+<div class="dual">
+<div class="panel fact">
+<h4>What is firmly established</h4>
+<ul>
+<li>National stocks are substantially above projected requirements — procurement has succeeded.</li>
+<li>The dealer-policy transition temporarily thinned parts of the retail network.</li>
+<li>Farmers in several districts faced rationing and above-official prices in informal channels.</li>
+<li>Demand is seasonal and geographic — national averages cannot guarantee local availability.</li>
+</ul>
+</div>
+<div class="panel alleg">
+<h4>Under examination — attributed, not proven</h4>
+<ul>
+<li>Special Branch report (via The Daily Star): alleged collusion between some dealers and retailers to create artificial shortages.</li>
+<li>Bangladesh Fertilizer Association: public warnings against hoarding and inflated prices.</li>
+</ul>
+</div>
+</div>
+<div class="caveat">These remain attributed allegations, not findings — and they should not be applied to the dealer community as a whole. The constructive path is transparent, evidence-based investigation: it protects honest dealers from blanket suspicion while assuring farmers that the system is being defended on their behalf.</div>
+
+<p>Seen this way, the government&rsquo;s task is not one problem but one <em>opportunity</em> with two supportive halves: keep supply flowing to legitimate farmers without interruption, and let transparent investigation clarify whether any individuals attempted manipulation. Both strengthen the same institution — trust.</p>
+<div class="pull"><span>&ldquo;Blanket accusations can damage honest dealers; transparent investigation can protect both the farmer and the honest majority of the trade.&rdquo;</span><span class="src">— On evidence-based accountability</span></div> </section>
+
+<!-- SECTION 3 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>Reform Is Already in Motion: The 2026 Dealer Policy as a Turning Point</h2></div>
+<p>It is worth saying plainly: the turbulence of recent months is not a symptom of failure — it is the growing pain of modernisation. The 2026 Dealer Policy is an attempt to build a cleaner, more accountable retail network, and every serious reform passes through an adjustment period. The task now is to carry it through confidently and kindly:</p>
+<p><strong>Complete transitions before peak seasons.</strong> Dealer appointments and network gaps should be closed ahead of critical fertilisation windows, so no farmer ever waits on paperwork. <strong>Define responsibilities clearly</strong> — lifting, stocking, selling at official prices — with auditable records and proportionate, predictable consequences. And just as importantly, <strong>reward compliant dealers swiftly</strong>: the honest majority of the trade should experience the new policy as recognition, not suspicion.</p>
+<p>Handled this way, the dealer-policy transition becomes what it was always meant to be: the moment Bangladesh&rsquo;s fertiliser retail turned professional.</p>
+</section>
+
+<!-- SECTION 4 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>The Structural Horizon: Turning Import Dependence into Domestic Revival</h2></div>
+<p>Beyond the last mile lies a longer, equally winnable campaign. More than two-thirds of Bangladesh&rsquo;s annual fertiliser requirement is met through imports. In FY2025–26, state-owned factories reportedly produced around 1.06 million tonnes against national demand of roughly 6.6 million tonnes, with several plants interrupted by gas shortages, ageing machinery and raw-material constraints. Far from being a cause for alarm, this gap is a map — it shows exactly where investment in plant rehabilitation, reliable gas supply and efficiency modernisation would pay the greatest national dividend.</p>
+
+<div class="fig">
+<h3>The domestic production opportunity, FY2025–26</h3>
+<div class="figrow">
+<div class="half">
+<svg viewBox="0 0 640 340" role="img" aria-label="Bar chart: national demand approx 6.6 million tonnes versus domestic factory output approx 1.06 million tonnes" style="width:100%;height:auto">
+<g stroke="#e4ded2" stroke-width="1">
+<line x1="70" y1="290" x2="620" y2="290"/><line x1="70" y1="218" x2="620" y2="218"/>
+<line x1="70" y1="146" x2="620" y2="146"/><line x1="70" y1="74" x2="620" y2="74"/>
+</g>
+<g font-family="Arial" font-size="12" fill="#6f6a61">
+<text x="60" y="294" text-anchor="end">0</text><text x="60" y="222" text-anchor="end">2</text>
+<text x="60" y="150" text-anchor="end">4</text><text x="60" y="78" text-anchor="end">6</text>
+</g>
+<text transform="rotate(-90 22 180)" x="22" y="180" text-anchor="middle" font-family="Arial" font-size="11.5" fill="#6f6a61" letter-spacing="2">MILLION TONNES</text>
+<rect x="150" y="52.4" width="130" height="237.6" rx="4" fill="#006a4e"/>
+<text x="215" y="42" text-anchor="middle" font-family="Georgia" font-weight="bold" font-size="17" fill="#004d39">≈6.6M t</text>
+<rect x="400" y="251.8" width="130" height="38.2" rx="4" fill="#f42a41"/>
+<text x="465" y="242" text-anchor="middle" font-family="Georgia" font-weight="bold" font-size="17" fill="#c8121f">≈1.06M t</text>
+<line x1="575" y1="60" x2="575" y2="244" stroke="#f42a41" stroke-width="1.6" stroke-dasharray="5 4"/>
+<polygon points="575,54 570.5,63 579.5,63" fill="#f42a41"/>
+<polygon points="575,250 570.5,241 579.5,241" fill="#f42a41"/>
+<text transform="rotate(90 596 152)" x="596" y="152" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="12.5" fill="#c8121f">≈5.5M t — the domestic revival opportunity</text>
+<text x="215" y="314" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="13" fill="#1a1a1a">National demand</text>
+<text x="465" y="314" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="13" fill="#1a1a1a">Domestic factory output</text>
+<text x="465" y="332" text-anchor="middle" font-family="Arial" font-size="11" fill="#6f6a61">rehabilitation · gas reliability · modernisation</text>
+</svg>
+</div>
+<div class="half">
+<svg viewBox="0 0 320 320" role="img" aria-label="Donut chart: about 84 percent of fertiliser requirement met by imports, 16 percent domestic" style="width:100%;max-width:280px;display:block;margin:0 auto;height:auto">
+<circle cx="160" cy="160" r="100" fill="none" stroke="#f42a41" stroke-width="46"/>
+<circle cx="160" cy="160" r="100" fill="none" stroke="#006a4e" stroke-width="46" stroke-dasharray="100.5 527.8" transform="rotate(212.4 160 160)"/>
+<text x="160" y="152" text-anchor="middle" font-family="Georgia" font-weight="bold" font-size="42" fill="#c8121f">84%</text>
+<text x="160" y="178" text-anchor="middle" font-family="Arial" font-size="13" fill="#4a4a4a">met by imports</text>
+<text x="160" y="200" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="13" fill="#004d39">16% domestic</text>
+</svg>
+<div class="legend">
+<span><i style="background:#006a4e"></i>Domestic production ≈16%</span>
+<span><i style="background:#f42a41"></i>Imports ≈84% (derived)</span>
+</div>
+</div>
+</div>
+<div class="figcap">Figures as reported · import share derived from reported production and demand, FY2025–26</div>
+</div>
+
+<p>Resilience thinking simply means recognising that fertiliser security rests on six links working together — and each link can be strengthened deliberately.</p>
+
+<div class="fig">
+<h3>Six links, one chain — each one strengthenable</h3>
+<div class="chain">
+<div class="node"><span class="n">1</span><b>International prices</b><small>diversified sourcing hedges swings</small></div>
+<div class="arw">→</div>
+<div class="node"><span class="n">2</span><b>Shipping &amp; logistics</b><small>storage buffers buy time</small></div>
+<div class="arw">→</div>
+<div class="node"><span class="n">3</span><b>Foreign exchange</b><small>forward planning smooths payment</small></div>
+<div class="arw">→</div>
+<div class="node"><span class="n">4</span><b>Energy supply</b><small>reliable gas feeds the plants</small></div>
+<div class="arw">→</div>
+<div class="node"><span class="n">5</span><b>Domestic factories</b><small>modernisation lifts output</small></div>
+<div class="arw">→</div>
+<div class="node hot"><span class="n">6</span><b>Distribution network</b><small>the last mile — today&rsquo;s focus</small></div>
+</div>
+<div class="figcap">Strengthen one link at a time; the chain grows stronger overall</div>
+</div>
+
+<p>The same logic applies to <strong>fertiliser-use efficiency</strong> — the quiet multiplier. Balanced fertilisation, soil testing, improved nutrient-use efficiency and the integration of organic and organomineral sources reduce unnecessary dependence on purchased fertiliser while maintaining, and often improving, productivity. Every kilogram saved is a kilogram the state need not import, subsidise or transport.</p> </section>
+
+<!-- SECTION 5 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>Learning from the Region and the World</h2></div>
+<p>Bangladesh is fortunate to attempt this next step with a rich body of international experience to draw upon — from its neighbours and partners across Asia to documented programmes in Africa and Latin America. The lesson is never to copy a system wholesale, but to adapt its proven core.</p>
+<div class="lessons">
+<div class="lesson">
+<header><b>INDIA</b><span>INFORMATION</span></header>
+<div class="body">Assesses fertiliser demand by <b>state and month</b>, coordinating supplies to the seasonal map, with digital tracking intended to follow movement and availability through the chain.</div>
+<div class="take">Match supply with geography and season.</div>
+</div>
+<div class="lesson">
+<header><b>KENYA</b><span>TARGETING</span></header>
+<div class="body">World Bank&ndash;documented <b>digital vouchers</b> deliver subsidies directly to eligible farmers via mobile-based systems and participating retailers.</div>
+<div class="take">Connect the subsidy to the farmer, not the middle.</div>
+</div>
+<div class="lesson">
+<header><b>BRAZIL</b><span>RESILIENCE</span></header>
+<div class="body">A <b>National Fertilizer Plan</b> looks beyond annual procurement — domestic production, infrastructure, research and alternative nutrients to reduce import dependence.</div>
+<div class="take">Plan in decades, not budget cycles.</div>
+</div>
+</div>
+<p style="font-size:15px;color:var(--ink-soft)">Closer to home, the experiences of <strong>China, Vietnam and the Philippines</strong> reinforce the same three principles — better information, more transparent distribution and greater long-term resilience — each already visible in Bangladesh&rsquo;s own reform agenda.</p>
+<div class="principles">
+<div class="pr"><i>1</i>Better information</div>
+<div class="pr"><i>2</i>More transparent distribution</div>
+<div class="pr"><i>3</i>Greater long-term resilience</div>
+</div>
+</section>
+
+<!-- SECTION 6 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>Seven Actions to Complete the Journey</h2></div>
+<p>The encouraging truth is that Bangladesh does not need to invent anything new. The technology is ready, the policy framework exists, and the regional evidence is clear. What follows is a seven-point action agenda — none of it requires new legislation, and each step unlocks the next within a single budget cycle.</p>
+
+<div class="fig">
+<h3>Building the digital rail: from national store to farmer&rsquo;s hand</h3>
+<div class="funnel">
+<div class="fstep"><span class="t">Strong today ✓</span><b>National stock &amp; procurement</b></div>
+<div class="fstep mid"><span class="t">Strengthening</span><b>Regional &amp; district allocation — land-linked</b></div>
+<div class="fstep mid"><span class="t">Strengthening</span><b>Upazila supply &amp; dealer lifting</b></div>
+<div class="fstep low"><span class="t">Digital rail target</span><b>Biometric PoS sale — Krishak Card + NID</b></div>
+<div class="fstep low"><span class="t">Digital rail target</span><b>Verified farmer purchase at MRP</b></div>
+</div>
+<div class="fnote">The visibility test: if 100 tonnes are allocated to an area, policymakers should be able to see how much reached dealers, how much remains with them, and how much reached farmers — turning every future shortage signal into an early warning rather than a late discovery.</div>
+</div>
+
+<div class="roadmap">
+<div class="rm"><span class="rn">1</span>
+<b>Issue the biometric PoS circular</b>
+<p>Direct the Secretary to mandate biometric point-of-sale piloting across <strong>all divisions within 90 days</strong>, using the Krishak Card and NID as the identity backbone.</p>
+<span class="when">Within 90 days</span>
+</div>
+<div class="rm"><span class="rn">2</span>
+<b>Link stock allocation to land data</b>
+<p>Instruct BADC and DAE to integrate allocation with the BDS/EDLMS land-parcel database, so quotas are <strong>land-linked by the upcoming Boro season</strong>.</p>
+<span class="when">By Boro season</span>
+</div>
+<div class="rm"><span class="rn">3</span>
+<b>Champion the 2026 Dealer Policy with confident enforcement</b>
+<p>Reward compliant dealers swiftly; apply predictable, fair consequences for unlifted stocks or sales above MRP — accountability that lifts the honest majority.</p>
+<span class="when">Ongoing</span>
+</div>
+<div class="rm"><span class="rn">4</span>
+<b>Approve the e-voucher pilot in two districts</b>
+<p>With the Finance Division, move subsidy delivery <strong>from companies to farmers</strong> over mobile financial service rails — the Kenya lesson, adapted to Bangladesh&rsquo;s world-leading MFS ecosystem.</p>
+<span class="when">Pilot season</span>
+</div>
+<div class="rm"><span class="rn">5</span>
+<b>Establish the independent oversight committee</b>
+<p>Farmers&rsquo; leaders, civil society and technical experts publishing <strong>quarterly transparency reports</strong> — institutionalising shared stewardship of the system.</p>
+<span class="when">Quarterly reports</span>
+</div>
+<div class="rm"><span class="rn">6</span>
+<b>Deliver one million Soil Health Cards in 18 months</b>
+<p>Task SRDI, beginning in the <strong>most fertiliser-intensive rice belts</strong>, so entitlements rest on soil evidence and efficiency becomes the default.</p>
+<span class="when">18 months</span>
+</div>
+<div class="rm wide"><span class="rn">7</span>
+<b>Approve the KrishiChain BD pilot — US$219,450</b>
+<p>Commence immediately in <strong>Chattogram and Khulna</strong>, with Phase-2 funding contingent on a <strong>95% transaction-capture rate</strong> — a self-policing pilot that proves the digital rail before national scale-up.</p>
+<span class="when">Immediate start · evidence-gated Phase 2</span>
+</div>
+</div>
+
+<div class="roi">
+<p><b>The economics favour action:</b> efficiency recovery alone is projected to return <b>Tk 2,000–3,000 crore to the exchequer every year</b> — allowing the reform to pay for itself within two to three fiscal cycles, with a projected pilot ROI of <b>72:1</b> and a target leakage rate below <b>5%</b>. This is not a cost; it is an investment with one of the best returns available in public policy.</p>
+</div> </section>
+
+<!-- SECTION 7 -->
+<section>
+<div class="shead"><span class="chip"></span><h2>From Stock Management to Farmer Security — The Road to Bloom</h2></div>
+<p>The recent season should be remembered not as a crisis, but as the moment Bangladesh saw its next frontier clearly. The nation has proven it can procure fertiliser at scale and sustain one of the world&rsquo;s largest agricultural subsidy programmes. The remaining task — distribution excellence at the last mile — is narrower, well understood, and equipped with ready solutions.</p>
+<p>Both truths can coexist, and each strengthens the other: national abundance is real, and farmer-level assurance is achievable. The test of the system is not what appears in a warehouse report; it is what happens when a farmer walks to the authorised dealer during the critical fertilisation window.</p>
+
+<div class="check">
+<div class="discw2"></div><div class="discw"></div>
+<h3>Five promises to keep at every dealer counter</h3>
+<ul>
+<li>The correct product — always in reach.</li>
+<li>The required quantity — no artificial ceilings.</li>
+<li>The official price — every single sale.</li>
+<li>An accountable, honoured dealer network.</li>
+<li>A government that can verify every bag&rsquo;s journey.</li>
+</ul>
+<p>Keep these five, and every national stock figure becomes a lived reality in the field.</p>
+</div>
+
+<p>The immediate disruptions can be resolved quickly; the larger opportunity should not be missed. With the seven actions above — biometric authentication, land-linked allocation, a confident dealer policy, e-vouchers, independent oversight, soil health cards and a transparent digital pilot — Bangladesh can move from repeatedly responding to shortages toward <em>detecting them before they ever reach a farmer</em>.</p>
+
+<div class="conclusion">
+<div class="tag">The bottom line</div>
+<p class="big">&ldquo;A warehouse full of fertiliser becomes a nation full of nourishment the moment every farmer&rsquo;s hands are filled. The ultimate measure of fertiliser security is the farmer who obtains the right fertiliser, at the right price, at the right place and at the right time — and Bangladesh now holds every tool needed to deliver exactly that.&rdquo;</p>
+<p class="sub">— Abu Md. Moniruzjaman · Additional Deputy Director (Horticulture), DAE Kurigram · 31st BCS Agriculture Cadre</p>
+<div class="motto">সবার আগে বাংলাদেশ।</div>
+</div>
+
+<div class="sigbox">
+<div class="avatar">AM</div>
+<div class="who">
+<b>Abu Md. Moniruzjaman</b>
+<span>Fertiliser Policy &amp; Markets Desk · Special Report · For editorial publication</span>
+</div>
+</div> </section>
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+<div class="flagbar"></div>
+<div class="wrap foot">
+<b>EDITOR&rsquo;S NOTE:</b> This op-ed is written in a constructive spirit. Field observations concern specific localised situations and attributed allegations (Special Branch report via The Daily Star; Bangladesh Fertilizer Association statements) remain unproven and subject to transparent investigation; they do not reflect on the dealer community as a whole. Data points — 1.365M t in stores, 365,000 t import pipeline, Tk 17,001 Cr subsidy, Tk 2,000–3,000 Cr projected annual recovery, 72:1 pilot ROI, &lt;5% leakage target, KrishiChain BD pilot (US$219,450, Chattogram &amp; Khulna, 95% capture gate), one million Soil Health Cards via SRDI — are drawn from the Ministry of Agriculture (Strategic Planning Unit) briefing &ldquo;Fertilizer Management: The Path to Bloom&rdquo; (September 2026), the KrishiChain BD pilot proposal and the Comprehensive Strategic Report on Fertiliser Distribution Reform. Production (≈1.06M t) and demand (≈6.6M t) figures for FY2025–26 are as reported; the ≈84% import share is derived.<br>
+<b>THEME:</b> Bangladesh national colours — Green #006A4E · Red #F42A41
+</div>
+</footer>
+
+</body>
+</html>
