@@ -3,6 +3,7 @@ name: Deploy static content to Pages
 on:
   push:
     branches: ["main"]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -11,17 +12,14 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 env:
   SITE_BASE: https://moniruzjaman.github.io/fertilizer
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -44,6 +42,35 @@ jobs:
       - name: Test builder
         working-directory: tools/site-builder
         run: npm test
+
+      - name: Build site
+        working-directory: tools/site-builder
+        run: npm run build
+
+  deploy:
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tools/site-builder/package-lock.json
+
+      - name: Install PDF raster tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils fonts-dejavu-core fontconfig
+
+      - name: Install builder
+        working-directory: tools/site-builder
+        run: npm ci
 
       - name: Build site
         working-directory: tools/site-builder
