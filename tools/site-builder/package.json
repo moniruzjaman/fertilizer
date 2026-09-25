@@ -1,0 +1,16 @@
+{
+  "name": "site-builder",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node src/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "js-yaml": "^4.1.0",
+    "pdfjs-dist": "^4.10.38",
+    "sharp": "^0.33.5"
+  }
+}

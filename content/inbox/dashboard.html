@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সার ব্যবস্থাপনা: সংকট থেকে সমৃদ্ধি | Fertilizer Management — Burden to Bloom | Ministry of Agriculture, Bangladesh</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+    darkMode: 'class',
+    theme: {
+        extend: {
+            colors: {
+                /* Bangladesh Flag Green — #006A4E */
+                bd: {
+                    50:'#e6f4ef', 100:'#c0e4d6', 200:'#96d2bb', 300:'#6bbf9f',
+                    400:'#4bb28b', 500:'#2ba577', 600:'#1f8d64', 700:'#006A4E',
+                    800:'#00563f', 900:'#004230', 950:'#002b20'
+                },
+                /* Bangladesh Flag Red — #F42A41 */
+                rb: {
+                    50:'#fef2f3', 100:'#fde2e5', 200:'#fbc8ce', 300:'#f8a1ac',
+                    400:'#f56d80', 500:'#F42A41', 600:'#e01330', 700:'#bb0d28',
+                    800:'#9b0f26', 900:'#801225', 950:'#47030f'
+                },
+                gold: {
+                    50:'#fdf9ed', 100:'#f9f0d0', 200:'#f2dfa0', 300:'#eac96a',
+                    400:'#e3b240', 500:'#da9c26', 600:'#c17e1c', 700:'#a0601a',
+                    800:'#824c1c', 900:'#6b3f1b'
+                }
+            },
+            fontFamily: {
+                display: ['Georgia','serif'],
+                body: ['system-ui','-apple-system','sans-serif'],
+                bangla: ['"Noto Sans Bengali"','system-ui','sans-serif']
+            }
+        }
+    }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+
+<style>
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;} html{scroll-behavior:auto;} }
+
+/* ===== Flag-inspired gradients ===== */
+.hero-bg{
+    background:
+        radial-gradient(circle at 78% 30%, rgba(244,42,65,.55) 0%, rgba(244,42,65,0) 42%),
+        radial-gradient(circle at 12% 82%, rgba(43,165,119,.35) 0%, rgba(0,0,0,0) 50%),
+        linear-gradient(150deg, #004230 0%, #006A4E 45%, #00563f 75%, #002b20 100%);
+}
+.gradient-burden{ background: linear-gradient(135deg,#801225 0%,#bb0d28 55%,#F42A41 100%); }
+.gradient-bloom{ background: linear-gradient(135deg,#004230 0%,#006A4E 55%,#2ba577 100%); }
+.gradient-gold{ background: linear-gradient(135deg,#6b3f1b 0%,#a0601a 50%,#c17e1a 100%); }
+
+.text-grad-green{ background:linear-gradient(120deg,#006A4E,#2ba577); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.text-grad-red{ background:linear-gradient(120deg,#bb0d28,#F42A41); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.dark .text-grad-green{ background:linear-gradient(120deg,#4bb28b,#96d2bb); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.dark .text-grad-red{ background:linear-gradient(120deg,#f56d80,#fbc8ce); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+/* ===== Flag disc ornament ===== */
+.flag-disc{ position:relative; width:120px; height:120px; }
+.flag-disc .ring{ position:absolute; inset:0; border-radius:9999px; background:#F42A41; box-shadow:0 0 0 8px rgba(244,42,65,.18), 0 12px 40px rgba(244,42,65,.35); }
+.flag-disc .inner{ position:absolute; inset:14px; border-radius:9999px; border:2px dashed rgba(255,255,255,.55); }
+
+/* ===== Cards & motion ===== */
+.card-hover{ transition: transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s, border-color .3s; }
+.card-hover:hover{ transform: translateY(-5px); box-shadow:0 22px 44px -14px rgba(0,66,48,.28); }
+.glass{ background:rgba(255,255,255,.08); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.16); }
+.number-counter{ font-variant-numeric: tabular-nums; }
+
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.floaty{ animation:floaty 3.4s ease-in-out infinite; }
+@keyframes pulsered{0%,100%{box-shadow:0 0 0 0 rgba(244,42,65,.45)}70%{box-shadow:0 0 0 14px rgba(244,42,65,0)}}
+.pulse-red{ animation:pulsered 2.2s infinite; }
+@keyframes growbar{ from{height:0} }
+.grow-bar{ animation: growbar 1.2s ease-out; }
+
+/* ===== Timeline spine (green → red → gold → green) ===== */
+.timeline-line{ position:relative; }
+.timeline-line::before{ content:''; position:absolute; left:24px; top:0; bottom:0; width:3px;
+    background:linear-gradient(to bottom,#F42A41,#e3b240,#006A4E,#2ba577); border-radius:3px; }
+
+/* ===== Table polish ===== */
+.data-table thead tr{ background:linear-gradient(90deg,#006A4E,#00563f); }
+.data-table tbody tr:hover{ background:#e6f4ef; }
+.dark .data-table tbody tr:hover{ background:#004230; }
+
+/* ===== Section ribbon ===== */
+.ribbon{ clip-path: polygon(0 0,100% 0,100% 78%,50% 100%,0 78%); }
+
+@media print{ .no-print{display:none!important;} .print-break{page-break-before:always;} }
+</style>
+</head>
+
+<body class="bg-[#f7faf8] dark:bg-[#07130e] text-gray-900 dark:text-gray-100 font-body antialiased"
+      x-data="{ activeTab:'india', showToc:false }">
+
+<!-- Scroll progress (flag gradient) -->
+<div class="fixed top-0 left-0 h-1.5 z-[100] transition-all duration-150" id="progressBar"
+     style="background:linear-gradient(90deg,#006A4E,#F42A41,#e3b240);width:0%;"></div>
+
+<!-- ================= NAV ================= -->
+<header class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-white/85 dark:bg-[#0a1a13]/90 border-b-2 border-bd-700/25 no-print">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <!-- Mini flag disc -->
+                <div class="relative w-10 h-10 rounded-full bg-bd-700 flex items-center justify-center shadow-md flex-shrink-0">
+                    <div class="w-4 h-4 rounded-full bg-rb-500 pulse-red"></div>
+                </div>
+                <div>
+                    <h1 class="text-sm font-extrabold leading-tight text-bd-800 dark:text-bd-200">
+                        Fertilizer Management <span class="text-rb-600 dark:text-rb-400">•</span> Burden to Bloom
+                    </h1>
+                    <p class="text-[11px] font-bangla text-gray-500 dark:text-gray-400 leading-tight">সার ব্যবস্থাপনা: সংকট থেকে সমৃদ্ধি — কৃষি মন্ত্রণালয়</p>
+                </div>
+            </div>
+
+            <div class="hidden xl:flex items-center gap-0.5 text-xs font-semibold">
+                <a href="#executive" class="px-3 py-2 rounded-lg hover:bg-bd-50 dark:hover:bg-bd-900/40 hover:text-bd-700 dark:hover:text-bd-200 transition-colors">Executive</a>
+                <a href="#burden" class="px-3 py-2 rounded-lg text-rb-700 dark:text-rb-300 hover:bg-rb-50 dark:hover:bg-rb-900/25 transition-colors">The Burden</a>
+                <a href="#turning" class="px-3 py-2 rounded-lg text-gold-700 dark:text-gold-300 hover:bg-gold-50 dark:hover:bg-gold-900/25 transition-colors">Turning Point</a>
+                <a href="#path" class="px-3 py-2 rounded-lg text-bd-700 dark:text-bd-300 hover:bg-bd-50 dark:hover:bg-bd-900/40 transition-colors">The Path</a>
+                <a href="#bloom" class="px-3 py-2 rounded-lg text-bd-700 dark:text-bd-300 hover:bg-bd-50 dark:hover:bg-bd-900/40 transition-colors">The Bloom</a>
+                <a href="#roadmap" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Roadmap</a>
+                <a href="#recommendations" class="px-3 py-2 rounded-lg text-rb-700 dark:text-rb-300 hover:bg-rb-50 dark:hover:bg-rb-900/25 transition-colors">Action</a>
+            </div>
+
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-bd-700 text-white text-[10px] font-bold uppercase tracking-wider">
+                    <i data-lucide="shield-check" class="w-3 h-3"></i> Official
+                </span>
+                <button onclick="document.body.classList.toggle('dark')" class="p-2 rounded-lg hover:bg-bd-50 dark:hover:bg-bd-900/40 transition-colors" aria-label="Toggle dark mode">
+                    <i data-lucide="sun" class="w-5 h-5 text-gold-600 dark:hidden"></i>
+                    <i data-lucide="moon" class="w-5 h-5 text-gold-300 hidden dark:block"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main class="pt-[68px]">
+
+<!-- ================= HERO ================= -->
+<section class="relative min-h-[92vh] flex items-center justify-center overflow-hidden hero-bg">
+    <!-- decorative field rows -->
+    <div class="absolute inset-0 opacity-[0.07]" style="background-image:repeating-linear-gradient(0deg,#fff 0 1px,transparent 1px 46px);"></div>
+    <div class="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-rb-500/25 blur-3xl"></div>
+    <div class="absolute -bottom-32 -left-24 w-[380px] h-[380px] rounded-full bg-bd-400/25 blur-3xl"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto px-6 py-20 text-center" data-aos="fade-up">
+        <div class="flex justify-center mb-8">
+            <div class="flag-disc floaty">
+                <div class="ring"></div>
+                <div class="inner"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i data-lucide="sprout" class="w-10 h-10 text-white"></i>
+                </div>
+            </div>
+        </div>
+
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-white/90 text-xs font-semibold tracking-wide mb-6">
+            <i data-lucide="landmark" class="w-3.5 h-3.5"></i>
+            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার • Ministry of Agriculture
+        </span>
+
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-display font-extrabold text-white leading-tight mb-4">
+            Fertilizer Management
+        </h1>
+        <h2 class="text-3xl sm:text-5xl lg:text-6xl font-display font-bold mb-5">
+            <span class="text-rb-300">Burden</span>
+            <span class="text-white/60 mx-2">→</span>
+            <span class="text-bd-300">Bloom</span>
+        </h2>
+        <p class="font-bangla text-xl sm:text-2xl text-gold-200 font-semibold mb-6">সার ব্যবস্থাপনা: বোঝা থেকে সমৃদ্ধির পথে</p>
+
+        <p class="text-base sm:text-lg text-white/80 max-w-3xl mx-auto mb-10 leading-relaxed">
+            A Comprehensive Strategic Framework for Transforming Bangladesh's Agricultural Input System
+            from Fiscal Crisis to Sustainable Prosperity — grounded in comparative lessons from
+            <strong class="text-white">India, China, Vietnam &amp; the Philippines</strong>, and powered by
+            <strong class="text-white">Krishak Card, BDS/EDLMS and KrishiChain BD</strong>.
+        </p>
+
+        <!-- Hero stat strip -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-10 max-w-4xl mx-auto">
+            <div class="glass rounded-2xl p-4 sm:p-5 text-center card-hover">
+                <div class="text-2xl sm:text-3xl font-extrabold text-rb-300 number-counter">Tk 17,001 Cr</div>
+                <div class="text-[11px] uppercase tracking-wider text-white/60 mt-1">Annual Subsidy Burden</div>
+            </div>
+            <div class="glass rounded-2xl p-4 sm:p-5 text-center card-hover">
+                <div class="text-2xl sm:text-3xl font-extrabold text-white number-counter">1.365M t</div>
+                <div class="text-[11px] uppercase tracking-wider text-white/60 mt-1">Idle in Warehouses</div>
+            </div>
+            <div class="glass rounded-2xl p-4 sm:p-5 text-center card-hover">
+                <div class="text-2xl sm:text-3xl font-extrabold text-bd-300 number-counter">72 : 1</div>
+                <div class="text-[11px] uppercase tracking-wider text-white/60 mt-1">Projected Pilot ROI</div>
+            </div>
+            <div class="glass rounded-2xl p-4 sm:p-5 text-center card-hover">
+                <div class="text-2xl sm:text-3xl font-extrabold text-gold-300 number-counter">&lt;5%</div>
+                <div class="text-[11px] uppercase tracking-wider text-white/60 mt-1">Target Leakage Rate</div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#executive" class="px-8 py-3.5 bg-rb-500 hover:bg-rb-600 text-white font-bold rounded-xl transition-all shadow-xl shadow-rb-500/30 hover:shadow-rb-500/50 hover:-translate-y-0.5">
+                Read the Full Report
+            </a>
+            <a href="#recommendations" class="px-8 py-3.5 border-2 border-white/40 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                Immediate Ministerial Actions →
+            </a>
+        </div>
+
+        <p class="mt-10 text-white/50 text-xs tracking-wide">September 2026 • Classification: Official / Ministerial Briefing • Strategic Planning Unit</p>
+    </div>
+
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce">
+        <i data-lucide="chevron-down" class="w-6 h-6 text-white/50"></i>
+    </div>
+</section>
+
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<section id="executive" class="py-20 bg-white dark:bg-[#0b1a14] border-b border-bd-700/10">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-bd-50 dark:bg-bd-900/40 text-bd-700 dark:text-bd-300 text-[11px] font-bold uppercase tracking-widest mb-4 border border-bd-700/20">
+                <i data-lucide="file-text" class="w-3 h-3"></i> Section 01
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-grad-green">Executive Summary</h2>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 mb-10">
+            <div class="lg:col-span-2 space-y-5" data-aos="fade-right">
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                    Bangladesh's agricultural sector confronts a defining paradox:
+                    <strong class="text-rb-600 dark:text-rb-400">over 1.365 million tonnes</strong> of fertilizer sit in government warehouses,
+                    yet farmers in Rajshahi, Jashore, Kurigram and Lalmonirhat face acute shortages — paying
+                    <strong class="text-rb-600 dark:text-rb-400">50–100% above official prices</strong>.
+                    The crisis is not one of supply, but of <em>distribution integrity, institutional accountability and subsidy targeting</em>.
+                </p>
+                <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                    This report diagnoses root causes; inventories the digital assets already at our disposal
+                    (Krishak Card, BDS/EDLMS, NID, the 2026 Dealer Policy); distills actionable lessons from four Asian
+                    comparators; and presents a <strong class="text-bd-700 dark:text-bd-300">phased, technically feasible and politically urgent reform roadmap</strong>
+                    aligned with the SDGs, FAO's "Four Betters", and the nationalist, farmer-first ethos of
+                    <strong>Bir Uttam President Ziaur Rahman</strong>.
+                </p>
+                <div class="p-5 rounded-2xl border-l-4 border-rb-500 bg-rb-50 dark:bg-rb-950/30">
+                    <p class="text-sm font-semibold text-rb-800 dark:text-rb-200 flex items-start gap-2">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                        The current system is fiscally unsustainable, environmentally harmful, and socially regressive.
+                        Reform pays for itself within 2–3 fiscal cycles.
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-4" data-aos="fade-left">
+                <div class="card-hover p-5 rounded-2xl bg-white dark:bg-gray-900 border-2 border-rb-200 dark:border-rb-900 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-9 h-9 rounded-xl gradient-burden flex items-center justify-center shadow-md">
+                            <i data-lucide="weight" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <span class="font-bold text-rb-800 dark:text-rb-300">I · The Burden</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">Fiscal hemorrhage (Tk 17,001 Cr), regressive capture by the top 20%, environmental decay, &gt;70% import dependency, dealer collusion.</p>
+                </div>
+                <div class="card-hover p-5 rounded-2xl bg-white dark:bg-gray-900 border-2 border-gold-200 dark:border-gold-900 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center shadow-md">
+                            <i data-lucide="compass" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <span class="font-bold text-gold-800 dark:text-gold-300">II · The Turning Point</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">Digital assets ready, regional lessons learned, the 2026 Comprehensive Dealer Policy enacted, KrishiChain pilot designed.</p>
+                </div>
+                <div class="card-hover p-5 rounded-2xl bg-white dark:bg-gray-900 border-2 border-bd-200 dark:border-bd-900 shadow-sm">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-9 h-9 rounded-xl gradient-bloom flex items-center justify-center shadow-md">
+                            <i data-lucide="flower-2" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <span class="font-bold text-bd-800 dark:text-bd-300">III · The Bloom</span>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">Precision agriculture, farmer dignity, environmental recovery, sovereign food security, agricultural diplomacy leadership.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core recommendation -->
+        <div class="p-7 rounded-3xl bg-gradient-to-r from-bd-50 via-white to-rb-50 dark:from-bd-950/50 dark:via-gray-900 dark:to-rb-950/30 border-2 border-bd-700/25 shadow-lg" data-aos="fade-up">
+            <div class="flex items-start gap-5">
+                <div class="w-14 h-14 rounded-2xl gradient-bloom flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <i data-lucide="target" class="w-7 h-7 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-bd-800 dark:text-bd-200 text-lg mb-2">Core Recommendation</h3>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        Transition from a blanket, dealer-centric subsidy model to a
+                        <strong class="text-bd-700 dark:text-bd-300">biometrically authenticated, land-linked, digitally tracked distribution system</strong>
+                        that ensures the right farmer receives the right input, at the right price, at the right time —
+                        saving <strong class="text-rb-600 dark:text-rb-400">Tk 2,000–3,000 crore annually</strong> through leakage reduction alone.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= PART I — THE BURDEN ================= -->
+<section id="burden" class="py-20 bg-rb-50/60 dark:bg-rb-950/20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rb-100 dark:bg-rb-900/40 text-rb-700 dark:text-rb-300 text-[11px] font-bold uppercase tracking-widest mb-4 border border-rb-500/30">
+                <i data-lucide="weight" class="w-3 h-3"></i> Part I
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-display font-extrabold text-grad-red mb-3">The Burden</h2>
+            <p class="font-bangla text-gold-700 dark:text-gold-300 font-semibold mb-2">বোঝা: সংকটের শেকড় সন্ধান</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">The accumulated weight of fiscal strain, environmental damage and systemic failure</p>
+        </div>
+
+        <!-- Paradox split -->
+        <div class="grid md:grid-cols-2 gap-6 mb-16">
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-200 dark:border-bd-900 shadow-sm" data-aos="fade-right">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-11 h-11 rounded-xl bg-bd-50 dark:bg-bd-900/40 flex items-center justify-center">
+                        <i data-lucide="warehouse" class="w-5 h-5 text-bd-700 dark:text-bd-300"></i>
+                    </div>
+                    <h4 class="font-bold text-lg text-bd-800 dark:text-bd-200">What We Have <span class="text-xs font-medium text-gray-400">(National Level)</span></h4>
+                </div>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-bd-500 flex-shrink-0"></span>
+                        <span><strong>1.365 million tonnes</strong> in government warehouses</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-bd-500 flex-shrink-0"></span>
+                        <span><strong>365,000 tonnes</strong> approved imports (Tk 2,562 crore) in pipeline</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-bd-500 flex-shrink-0"></span>
+                        <span>National stocks <strong>above projected requirements</strong> for coming months</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-rb-300 dark:border-rb-900 shadow-sm" data-aos="fade-left">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-11 h-11 rounded-xl bg-rb-50 dark:bg-rb-900/40 flex items-center justify-center">
+                        <i data-lucide="user-x" class="w-5 h-5 text-rb-600 dark:text-rb-400"></i>
+                    </div>
+                    <h4 class="font-bold text-lg text-rb-800 dark:text-rb-300">What Farmers Experience <span class="text-xs font-medium text-gray-400">(Ground Level)</span></h4>
+                </div>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-rb-500 flex-shrink-0"></span>
+                        <span><strong>Rajshahi:</strong> TSP at Tk 1,700–1,800 vs official Tk 1,350</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-rb-500 flex-shrink-0"></span>
+                        <span><strong>Jashore:</strong> Tk 52/kg vs official ~Tk 26/kg — <em>100% markup</em></span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-rb-500 flex-shrink-0"></span>
+                        <span><strong>Mymensingh:</strong> only 32% of allocated stock lifted by dealers</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span class="mt-1.5 w-2.5 h-2.5 rounded-full bg-rb-500 flex-shrink-0"></span>
+                        <span><strong>Bhurungamari:</strong> hundreds of farmers broke open a dealer warehouse</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- District table -->
+        <div class="mb-16 overflow-x-auto rounded-2xl shadow-md border border-gray-200 dark:border-gray-800" data-aos="fade-up">
+            <table class="data-table w-full text-sm bg-white dark:bg-gray-900">
+                <thead>
+                    <tr class="text-white text-left">
+                        <th class="px-5 py-4 font-bold">District / Division</th>
+                        <th class="px-5 py-4 font-bold">Official Price</th>
+                        <th class="px-5 py-4 font-bold">Market Price</th>
+                        <th class="px-5 py-4 font-bold">Allocation vs. Lifted</th>
+                        <th class="px-5 py-4 font-bold">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tr>
+                        <td class="px-5 py-3.5 font-semibold">Rajshahi (TSP)</td>
+                        <td class="px-5 py-3.5">Tk 1,350 / 50kg</td>
+                        <td class="px-5 py-3.5 text-rb-600 dark:text-rb-400 font-bold">Tk 1,700–1,800</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5"><span class="px-2.5 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-xs font-bold">+33% markup</span></td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3.5 font-semibold">Jashore (TSP)</td>
+                        <td class="px-5 py-3.5">~Tk 26 / kg</td>
+                        <td class="px-5 py-3.5 text-rb-600 dark:text-rb-400 font-bold">Tk 52 / kg</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5"><span class="px-2.5 py-1 rounded-full bg-rb-100 dark:bg-rb-900/40 text-rb-700 dark:text-rb-300 text-xs font-bold">+100% markup</span></td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3.5 font-semibold">Gazipur (Urea)</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5 font-bold">800 / 1,876 t</td>
+                        <td class="px-5 py-3.5"><span class="px-2.5 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-xs font-bold">43% lifted</span></td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3.5 font-semibold">Dhaka Division (8 districts)</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5 font-bold">8,965 / 19,918 t</td>
+                        <td class="px-5 py-3.5"><span class="px-2.5 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-xs font-bold">45% lifted</span></td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-3.5 font-semibold">Mymensingh Division</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5">—</td>
+                        <td class="px-5 py-3.5 font-bold text-rb-600 dark:text-rb-400">9,992 / 31,425 t</td>
+                        <td class="px-5 py-3.5"><span class="px-2.5 py-1 rounded-full bg-rb-100 dark:bg-rb-900/40 text-rb-700 dark:text-rb-300 text-xs font-bold">32% lifted</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid lg:grid-cols-2 gap-8 mb-16">
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm" data-aos="fade-right">
+                <h4 class="font-bold text-gray-900 dark:text-white mb-1">Nutrient Use Efficiency Decline Across Asia</h4>
+                <p class="text-xs text-gray-500 mb-4">KrishiChain target: keep Bangladesh's NUE &gt; 50%</p>
+                <canvas id="nueChart" height="260"></canvas>
+            </div>
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm" data-aos="fade-left">
+                <h4 class="font-bold text-gray-900 dark:text-white mb-1">Subsidy Distribution Inequity</h4>
+                <p class="text-xs text-gray-500 mb-4">World Bank assessment — the regressivity trap</p>
+                <canvas id="subsidyChart" height="260"></canvas>
+            </div>
+        </div>
+
+        <!-- Four burdens -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" data-aos="fade-up">
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-t-4 border-rb-500 shadow-sm text-center">
+                <div class="w-14 h-14 rounded-2xl bg-rb-50 dark:bg-rb-900/40 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="banknote" class="w-7 h-7 text-rb-600 dark:text-rb-400"></i>
+                </div>
+                <h4 class="font-bold mb-1">Fiscal Hemorrhage</h4>
+                <p class="text-2xl font-extrabold text-rb-600 dark:text-rb-400 number-counter">Tk 17,001 Cr</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">~80% of public agricultural spending absorbed by fertilizer subsidies (+Tk 1,350 Cr emergency supplement)</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-t-4 border-rb-500 shadow-sm text-center">
+                <div class="w-14 h-14 rounded-2xl bg-rb-50 dark:bg-rb-900/40 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="users" class="w-7 h-7 text-rb-600 dark:text-rb-400"></i>
+                </div>
+                <h4 class="font-bold mb-1">Regressive Capture</h4>
+                <p class="text-2xl font-extrabold text-rb-600 dark:text-rb-400 number-counter">50% → Top 20%</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Wealthiest landowners capture half of subsidies; bottom 40% receive only ~15%</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-t-4 border-gold-500 shadow-sm text-center">
+                <div class="w-14 h-14 rounded-2xl bg-gold-50 dark:bg-gold-900/40 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="ship" class="w-7 h-7 text-gold-600 dark:text-gold-400"></i>
+                </div>
+                <h4 class="font-bold mb-1">Import Dependency</h4>
+                <p class="text-2xl font-extrabold text-gold-600 dark:text-gold-400 number-counter">&gt;70%</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Of demand met via imports; only ~1.06 Mt produced domestically vs ~6.6 Mt demand; 4 of 5 urea plants shut by gas crisis</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-t-4 border-bd-500 shadow-sm text-center">
+                <div class="w-14 h-14 rounded-2xl bg-bd-50 dark:bg-bd-900/40 flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="droplets" class="w-7 h-7 text-bd-700 dark:text-bd-300"></i>
+                </div>
+                <h4 class="font-bold mb-1">Environmental Cost</h4>
+                <p class="text-2xl font-extrabold text-bd-700 dark:text-bd-300 number-counter">~5%</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Of farmers apply balanced nutrients; over-use drives soil acidification, water contamination and GHG emissions</p>
+            </div>
+        </div>
+
+        <!-- High-use paradox callout -->
+        <div class="mt-14 p-7 rounded-3xl bg-gradient-to-r from-rb-600 to-rb-800 text-white shadow-xl" data-aos="fade-up">
+            <div class="flex items-start gap-4">
+                <i data-lucide="flame" class="w-8 h-8 flex-shrink-0 mt-1"></i>
+                <div>
+                    <h4 class="font-extrabold text-lg mb-2">The High-Use Paradox — Asia's Warning</h4>
+                    <p class="text-white/85 text-sm leading-relaxed">
+                        China credited nitrogen fertilizers with up to <strong>50% of yield gains</strong>; India's nitrogen consumption exploded from
+                        <strong>0.21 Mt (1960–61) to 17.63 Mt (2018–19)</strong>. The price: NUE collapsed from 61%→50% (China) and 50%→42% (India),
+                        while India now spends <strong>&gt;US$8 billion annually</strong> on subsidies. Bangladesh must pursue
+                        <em>sustainable intensification</em> — optimizing the whole farming system, not maximizing a single input.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= PART II — THE TURNING POINT ================= -->
+<section id="turning" class="py-20 bg-white dark:bg-[#0b1a14]">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-[11px] font-bold uppercase tracking-widest mb-4 border border-gold-500/30">
+                <i data-lucide="compass" class="w-3 h-3"></i> Part II
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-display font-extrabold mb-3">
+                <span class="text-grad-red">Turning</span> <span class="text-grad-green">Point</span>
+            </h2>
+            <p class="font-bangla text-gold-700 dark:text-gold-300 font-semibold mb-2">সন্ধিক্ষণ: হাতে থাকা সম্পদ ও এশিয়ার শিক্ষা</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Assets already in hand, lessons from Asia, and the narrow window to leapfrog subsidy dependence</p>
+        </div>
+
+        <!-- Assets -->
+        <h3 class="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white" data-aos="fade-up">Foundational Assets Already in Possession</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+            <div class="card-hover p-6 rounded-3xl bg-gradient-to-br from-bd-50 to-white dark:from-bd-950/40 dark:to-gray-900 border-2 border-bd-200 dark:border-bd-800" data-aos="fade-up" data-aos-delay="0">
+                <div class="w-12 h-12 rounded-2xl gradient-bloom flex items-center justify-center mb-4 shadow-md">
+                    <i data-lucide="map" class="w-6 h-6 text-white"></i>
+                </div>
+                <h4 class="font-bold mb-2">Digital Land Mapping</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">BDS/EDLMS: <strong>20,000+</strong> mouza maps integrated; <strong>138,000</strong> under digitization; Korea MoU (Sept 2025) accelerating progress.</p>
+                <span class="inline-block px-2.5 py-1 rounded-full bg-bd-100 dark:bg-bd-900/40 text-bd-700 dark:text-bd-300 text-xs font-bold">Geospatial Layer</span>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-gradient-to-br from-rb-50 to-white dark:from-rb-950/30 dark:to-gray-900 border-2 border-rb-200 dark:border-rb-900" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-12 h-12 rounded-2xl gradient-burden flex items-center justify-center mb-4 shadow-md">
+                    <i data-lucide="credit-card" class="w-6 h-6 text-white"></i>
+                </div>
+                <h4 class="font-bold mb-2">Krishak Card</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Launched April 2026. <strong>120 data points</strong> per farmer. <strong>20,671</strong> farmers already receiving Tk 2,500/yr via MFS. Target: <strong>22M IDs by 2028</strong>.</p>
+                <span class="inline-block px-2.5 py-1 rounded-full bg-rb-100 dark:bg-rb-900/40 text-rb-700 dark:text-rb-300 text-xs font-bold">Identity + Payment</span>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-gradient-to-br from-gold-50 to-white dark:from-gold-950/30 dark:to-gray-900 border-2 border-gold-200 dark:border-gold-900" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-12 h-12 rounded-2xl gradient-gold flex items-center justify-center mb-4 shadow-md">
+                    <i data-lucide="file-check-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <h4 class="font-bold mb-2">2026 Dealer Policy</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">One dealer per union; <strong>eliminates sub-dealers &amp; retailers</strong>; transparent bidding, digital monitoring, stricter eligibility. Replaces obsolete 2009 framework.</p>
+                <span class="inline-block px-2.5 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-xs font-bold">Regulatory Layer</span>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-gradient-to-br from-gray-50 to-white dark:from-gray-800/40 dark:to-gray-900 border-2 border-gray-200 dark:border-gray-700" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-12 h-12 rounded-2xl bg-gray-800 dark:bg-gray-700 flex items-center justify-center mb-4 shadow-md">
+                    <i data-lucide="smartphone" class="w-6 h-6 text-white"></i>
+                </div>
+                <h4 class="font-bold mb-2">NID + Mobile Rails</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">National ID database and near-ubiquitous mobile coverage provide the <strong>authentication &amp; communication backbone</strong> for real-time verification.</p>
+                <span class="inline-block px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-bold">Authentication Layer</span>
+            </div>
+        </div>
+
+        <!-- Country tabs -->
+        <h3 class="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white" data-aos="fade-up">Lessons from Asia: What Works, What Fails</h3>
+        <div class="flex flex-wrap justify-center gap-2 mb-8" data-aos="fade-up">
+            <button @click="activeTab='india'" :class="activeTab==='india' ? 'bg-bd-700 text-white shadow-lg shadow-bd-700/30' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">🇮🇳 India — DBT Revolution</button>
+            <button @click="activeTab='china'" :class="activeTab==='china' ? 'bg-rb-500 text-white shadow-lg shadow-rb-500/30' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">🇨🇳 China — Zero Growth</button>
+            <button @click="activeTab='vietnam'" :class="activeTab==='vietnam' ? 'bg-bd-500 text-white shadow-lg shadow-bd-500/30' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">🇻🇳 Vietnam — Precision</button>
+            <button @click="activeTab='philippines'" :class="activeTab==='philippines' ? 'bg-gold-600 text-white shadow-lg shadow-gold-600/30' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all">🇵🇭 Philippines — Cooperatives</button>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <div x-show="activeTab==='india'" x-transition.duration.300ms class="p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-200 dark:border-bd-800 shadow-md">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-extrabold text-lg text-bd-800 dark:text-bd-200 mb-3">The Biometric DBT Revolution</h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Aadhaar-enabled PoS authenticates farmers at retail shops — subsidies released only after verified sales</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i><strong>2.87 lakh retailers</strong> serve <strong>8.4 crore farmers</strong> on a "no denial" basis (since 2018)</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>e-Bill system links payments to verified dealer sales records</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Piloting land &amp; crop-based pre-booking limits via app</li>
+                            <li class="flex items-start gap-2"><i data-lucide="alert-circle" class="w-4 h-4 text-rb-500 mt-0.5 flex-shrink-0"></i>Fiscal burden remains vast: ₹1.71 lakh crore budgeted 2026–27; &gt;US$8B/yr</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-bd-50 dark:bg-bd-950/40 border border-bd-200 dark:border-bd-800 h-fit">
+                        <h5 class="font-bold text-bd-800 dark:text-bd-200 mb-2 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Lesson for Bangladesh</h5>
+                        <p class="text-sm text-bd-700 dark:text-bd-300 leading-relaxed">Biometric authentication at point of sale is <strong>non-negotiable</strong> for eliminating diversion. The shift from blanket subsidies to land-linked quotas is the next frontier — even a deeply ossified system can be reformed with robust tech infrastructure.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="activeTab==='china'" x-transition.duration.300ms class="p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-rb-200 dark:border-rb-900 shadow-md">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-extrabold text-lg text-rb-800 dark:text-rb-300 mb-3">Zero Growth &amp; Digital Countryside</h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>2015: removed manufacturing subsidies; launched "Action Plan for Zero Growth in Chemical Fertilizer Use" (target 2020)</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Targets: fertilizer utilization <strong>&gt;40%</strong>; soil testing coverage <strong>&gt;90%</strong></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i><strong>99%+</strong> of villages have fiber/4G; ~80% have farmer information societies</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Internet-informed farmers <strong>3.5% more fertilizer-efficient</strong></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>E-commerce operators cut chemical use to protect product reputation; STFFT &amp; organic replacement (OFRT) scaled nationally</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-rb-50 dark:bg-rb-950/30 border border-rb-200 dark:border-rb-900 h-fit">
+                        <h5 class="font-bold text-rb-800 dark:text-rb-200 mb-2 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Lesson for Bangladesh</h5>
+                        <p class="text-sm text-rb-700 dark:text-rb-300 leading-relaxed">Reducing subsidies must be paired with massive investment in physical infrastructure ("high-standard farmland") and technical support. Digital infrastructure must <strong>precede or accompany</strong> subsidy reform. Market-based incentives can drive behavior change more effectively than input subsidies alone.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="activeTab==='vietnam'" x-transition.duration.300ms class="p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-200 dark:border-bd-800 shadow-md">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-extrabold text-lg text-bd-800 dark:text-bd-200 mb-3">Precision &amp; Low-Emission Rice</h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>"One Must, Five Reductions": certified seeds while reducing seeding rates, fertilizers, pesticides, water, post-harvest losses</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Mekong Delta <strong>1 Million Hectare</strong> High-Quality, Low-Emission Rice Program</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Achieved <strong>31.3%</strong> average reduction in fertilizer use; <strong>20%</strong> cut in nitrogen fertilizer &amp; irrigation water</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Soil health cards deliver tailored recommendations; Red River Delta shows cost of decades of over-application</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-bd-50 dark:bg-bd-950/40 border border-bd-200 dark:border-bd-800 h-fit">
+                        <h5 class="font-bold text-bd-800 dark:text-bd-200 mb-2 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Lesson for Bangladesh</h5>
+                        <p class="text-sm text-bd-700 dark:text-bd-300 leading-relaxed">Precision agriculture and organic integration can <strong>simultaneously improve farmer economics and environmental resilience</strong>. Reduction is not synonymous with loss — targeted packages for specific value chains drive meaningful change.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="activeTab==='philippines'" x-transition.duration.300ms class="p-7 rounded-3xl bg-white dark:bg-gray-900 border-2 border-gold-300 dark:border-gold-800 shadow-md">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-extrabold text-lg text-gold-800 dark:text-gold-200 mb-3">Cooperatives &amp; Climate-Smart Models</h4>
+                        <ul class="space-y-2.5 text-sm text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>AMIAnan Farmers Entrepreneur Agriculture Cooperative (AFEAC): aggregating demand, delivering extension, improving incomes</li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>PHP 5,000 cash subsidies to <strong>600,000 rice farmers</strong></li>
+                            <li class="flex items-start gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-bd-500 mt-0.5 flex-shrink-0"></i>Climate-Smart Coconut-Based Farming Systems for diversification</li>
+                            <li class="flex items-start gap-2"><i data-lucide="alert-triangle" class="w-4 h-4 text-gold-500 mt-0.5 flex-shrink-0"></i>Caution: inefficient subsidy reach, low NUE, Laguna Lake water pollution from historical overuse</li>
+                        </ul>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-gold-50 dark:bg-gold-950/30 border border-gold-200 dark:border-gold-900 h-fit">
+                        <h5 class="font-bold text-gold-800 dark:text-gold-200 mb-2 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Lesson for Bangladesh</h5>
+                        <p class="text-sm text-gold-800 dark:text-gold-200 leading-relaxed">Cooperatives are powerful intermediaries — but <strong>without digital tracking, subsidy schemes remain prone to leakage</strong>. Cash transfers can be more efficient than physical input distribution.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= PART III — THE PATH ================= -->
+<section id="path" class="py-20 bg-bd-50/50 dark:bg-bd-950/30">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-bd-100 dark:bg-bd-900/40 text-bd-700 dark:text-bd-300 text-[11px] font-bold uppercase tracking-widest mb-4 border border-bd-500/30">
+                <i data-lucide="route" class="w-3 h-3"></i> Part III
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-display font-extrabold text-grad-green mb-3">The Path Forward</h2>
+            <p class="font-bangla text-gold-700 dark:text-gold-300 font-semibold mb-2">পথচলা: ডিজিটাল রূপান্তরের স্থাপত্য</p>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Four-layer digital architecture, three-pillar strategy, and the KrishiChain BD transformation</p>
+        </div>
+
+        <!-- 4-Layer Architecture -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-700 shadow-md relative overflow-hidden" data-aos="fade-up" data-aos-delay="0">
+                <div class="absolute top-0 right-0 ribbon w-10 h-12 bg-bd-700 text-white text-xs font-bold flex items-start justify-center pt-1.5">1</div>
+                <div class="w-14 h-14 rounded-2xl bg-bd-50 dark:bg-bd-900/40 flex items-center justify-center mb-4">
+                    <i data-lucide="fingerprint" class="w-7 h-7 text-bd-700 dark:text-bd-300"></i>
+                </div>
+                <h4 class="font-bold mb-2">Identity &amp; Land</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Krishak Card + NID + BDS/EDLMS — biometric linkage to <strong>verified land parcels</strong> and crop declarations</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-rb-500 shadow-md relative overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+                <div class="absolute top-0 right-0 ribbon w-10 h-12 bg-rb-500 text-white text-xs font-bold flex items-start justify-center pt-1.5">2</div>
+                <div class="w-14 h-14 rounded-2xl bg-rb-50 dark:bg-rb-900/40 flex items-center justify-center mb-4">
+                    <i data-lucide="scan-face" class="w-7 h-7 text-rb-600 dark:text-rb-400"></i>
+                </div>
+                <h4 class="font-bold mb-2">Point of Sale</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Biometric PoS devices — Aadhaar-like authentication at dealer shops with <strong>offline capability</strong> and local server sync</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-gold-500 shadow-md relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+                <div class="absolute top-0 right-0 ribbon w-10 h-12 bg-gold-500 text-white text-xs font-bold flex items-start justify-center pt-1.5">3</div>
+                <div class="w-14 h-14 rounded-2xl bg-gold-50 dark:bg-gold-900/40 flex items-center justify-center mb-4">
+                    <i data-lucide="link-2" class="w-7 h-7 text-gold-600 dark:text-gold-400"></i>
+                </div>
+                <h4 class="font-bold mb-2">Tracking &amp; Transparency</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">Central Digital Ledger + <strong>blockchain</strong> — immutable record from import/production → dealer → farmer; public dashboard</p>
+            </div>
+            <div class="card-hover p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-500 shadow-md relative overflow-hidden" data-aos="fade-up" data-aos-delay="300">
+                <div class="absolute top-0 right-0 ribbon w-10 h-12 bg-bd-500 text-white text-xs font-bold flex items-start justify-center pt-1.5">4</div>
+                <div class="w-14 h-14 rounded-2xl bg-bd-50 dark:bg-bd-900/40 flex items-center justify-center mb-4">
+                    <i data-lucide="satellite" class="w-7 h-7 text-bd-600 dark:text-bd-400"></i>
+                </div>
+                <h4 class="font-bold mb-2">Advisory &amp; Verification</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">National Digital Agriculture Platform + <strong>satellite NDVI</strong> — mobile-first soil health advice; verification of crop declarations</p>
+            </div>
+        </div>
+
+        <!-- KrishiChain -->
+        <div class="mb-20 rounded-3xl overflow-hidden shadow-2xl border border-bd-700/30" data-aos="fade-up">
+            <div class="hero-bg p-8 sm:p-10 text-white text-center relative">
+                <div class="absolute top-6 right-8 w-16 h-16 rounded-full bg-rb-500/70 blur-sm"></div>
+                <p class="text-xs uppercase tracking-[0.25em] text-gold-300 font-bold mb-2">Proof of Concept</p>
+                <h3 class="text-3xl sm:text-4xl font-display font-extrabold mb-2">KrishiChain BD</h3>
+                <p class="font-bangla text-bd-200 mb-1">স্বচ্ছ ইনপুট • টেকসই ফলন</p>
+                <p class="text-white/80">Transparent Inputs. Sustainable Yields. — 50 Dealer Bins • Chattogram &amp; Khulna • 12 Months</p>
+            </div>
+            <div class="bg-white dark:bg-gray-900 p-8">
+                <div class="grid md:grid-cols-4 gap-4 mb-8">
+                    <div class="text-center p-5 rounded-2xl bg-bd-50 dark:bg-bd-950/40 border border-bd-200 dark:border-bd-800">
+                        <div class="text-3xl font-extrabold text-bd-700 dark:text-bd-300 number-counter">$219,450</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Total Pilot Investment</div>
+                    </div>
+                    <div class="text-center p-5 rounded-2xl bg-rb-50 dark:bg-rb-950/30 border border-rb-200 dark:border-rb-900">
+                        <div class="text-3xl font-extrabold text-rb-600 dark:text-rb-400 number-counter">72:1</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Projected Year-1 ROI</div>
+                    </div>
+                    <div class="text-center p-5 rounded-2xl bg-gold-50 dark:bg-gold-950/30 border border-gold-200 dark:border-gold-900">
+                        <div class="text-3xl font-extrabold text-gold-600 dark:text-gold-400 number-counter">20%</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Leakage Reduction Target</div>
+                    </div>
+                    <div class="text-center p-5 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                        <div class="text-3xl font-extrabold text-gray-700 dark:text-gray-200 number-counter">$8.78</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Cost per Farmer Reached</div>
+                    </div>
+                </div>
+
+                <!-- Budget bars -->
+                <h4 class="font-bold text-gray-900 dark:text-white mb-4">Pilot Budget Breakdown</h4>
+                <div class="space-y-3 mb-8">
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1"><span class="text-gray-700 dark:text-gray-300">Technology Development (App, Backend, Blockchain, Voice UI)</span><span class="text-bd-700 dark:text-bd-300">$105,000</span></div>
+                        <div class="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="grow-bar h-full rounded-full bg-bd-700" style="width:100%; animation:growbar 1.2s ease-out;"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1"><span class="text-gray-700 dark:text-gray-300">Operational Costs Year 1 (Cloud, SMS, Field Support, M&amp;E)</span><span class="text-rb-600 dark:text-rb-400">$42,000</span></div>
+                        <div class="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-rb-500" style="width:40%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1"><span class="text-gray-700 dark:text-gray-300">Hardware &amp; Infrastructure (50 Tablets, IoT Sensors, Servers)</span><span class="text-gold-700 dark:text-gold-300">$30,500</span></div>
+                        <div class="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gold-500" style="width:29%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1"><span class="text-gray-700 dark:text-gray-300">Capacity Building (Dealer / Farmer / Officer Training)</span><span class="text-bd-600 dark:text-bd-400">$22,000</span></div>
+                        <div class="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-bd-500" style="width:21%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-semibold mb-1"><span class="text-gray-700 dark:text-gray-300">Contingency (10% risk buffer)</span><span class="text-gray-500">$19,950</span></div>
+                        <div class="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden"><div class="h-full rounded-full bg-gray-400" style="width:19%"></div></div>
+                    </div>
+                </div>
+
+                <!-- 4-layer ecosystem -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="p-4 rounded-2xl border border-bd-200 dark:border-bd-800 bg-bd-50/50 dark:bg-bd-950/30">
+                        <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-bd-700 text-white text-xs font-bold flex items-center justify-center">1</span><span class="font-bold text-sm">Dealer App</span></div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Offline-first stock logging • Bangla voice UI • e-Bill integration • soil-health advisory at POS</p>
+                    </div>
+                    <div class="p-4 rounded-2xl border border-rb-200 dark:border-rb-900 bg-rb-50/50 dark:bg-rb-950/20">
+                        <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-rb-500 text-white text-xs font-bold flex items-center justify-center">2</span><span class="font-bold text-sm">Farmer Access</span></div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">USSD/SMS + App • digital receipts • Soil Health Card integration • inclusive design for the 68% without smartphones</p>
+                    </div>
+                    <div class="p-4 rounded-2xl border border-gold-200 dark:border-gold-900 bg-gold-50/50 dark:bg-gold-950/20">
+                        <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-gold-500 text-white text-xs font-bold flex items-center justify-center">3</span><span class="font-bold text-sm">Officer Dashboard</span></div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Real-time heatmaps • leakage alerts • NUE monitoring • evidence-based policy support</p>
+                    </div>
+                    <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                        <div class="flex items-center gap-2 mb-2"><span class="w-6 h-6 rounded-full bg-gray-700 text-white text-xs font-bold flex items-center justify-center">4</span><span class="font-bold text-sm">Policy Engine</span></div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">e-Bill processing • blockchain ledger • AI demand forecasting • BADC MIS integration</p>
+                    </div>
+                </div>
+
+                <!-- Funding split -->
+                <div class="p-5 rounded-2xl bg-gradient-to-r from-bd-700 to-bd-800 text-white flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
+                    <span class="opacity-70 mr-2">💡 Blended Funding:</span>
+                    <span class="px-3 py-1 rounded-full bg-white/15">40% GoB</span>
+                    <span class="px-3 py-1 rounded-full bg-white/15">40% Development Partners</span>
+                    <span class="px-3 py-1 rounded-full bg-rb-500">10% Private Sector</span>
+                    <span class="px-3 py-1 rounded-full bg-gold-500">10% In-kind (BADC/BCIC)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Three Pillars -->
+        <h3 class="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white" data-aos="fade-up">Three-Pillar Strategic Framework</h3>
+        <div class="grid md:grid-cols-3 gap-6" data-aos="fade-up">
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border-t-8 border-rb-500 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl gradient-burden flex items-center justify-center shadow"><i data-lucide="wrench" class="w-5 h-5 text-white"></i></div>
+                    <h4 class="font-extrabold">Pillar I — Modernize Subsidies</h4>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <li class="flex gap-2"><span class="text-rb-500 font-bold">•</span> e-Bill system (India model) — payments linked to verified sales</li>
+                    <li class="flex gap-2"><span class="text-rb-500 font-bold">•</span> Biometric PoS authentication</li>
+                    <li class="flex gap-2"><span class="text-rb-500 font-bold">•</span> Land-linked quotas from BDS/EDLMS parcels</li>
+                    <li class="flex gap-2"><span class="text-rb-500 font-bold">•</span> Blockchain verification ledger</li>
+                    <li class="flex gap-2"><span class="text-rb-500 font-bold">•</span> Shift from subsidizing inputs to subsidizing <em>verified outcomes</em></li>
+                </ul>
+            </div>
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border-t-8 border-gold-500 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl gradient-gold flex items-center justify-center shadow"><i data-lucide="building-2" class="w-5 h-5 text-white"></i></div>
+                    <h4 class="font-extrabold">Pillar II — Build Institutions</h4>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <li class="flex gap-2"><span class="text-gold-500 font-bold">•</span> Nationwide Soil Health Card program (China STFFT model)</li>
+                    <li class="flex gap-2"><span class="text-gold-500 font-bold">•</span> Village-level Agro-Service Centres — inputs, advice, machinery, credit in one hub</li>
+                    <li class="flex gap-2"><span class="text-gold-500 font-bold">•</span> Farmer cooperative professionalization (AFEAC model)</li>
+                    <li class="flex gap-2"><span class="text-gold-500 font-bold">•</span> Extension service reform — trusted, site-specific advisors</li>
+                    <li class="flex gap-2"><span class="text-gold-500 font-bold">•</span> Regulatory enforcement capacity building</li>
+                </ul>
+            </div>
+            <div class="card-hover p-7 rounded-3xl bg-white dark:bg-gray-900 border-t-8 border-bd-500 shadow-sm">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-11 h-11 rounded-xl gradient-bloom flex items-center justify-center shadow"><i data-lucide="wifi" class="w-5 h-5 text-white"></i></div>
+                    <h4 class="font-extrabold">Pillar III — Leverage Digital &amp; Markets</h4>
+                </div>
+                <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                    <li class="flex gap-2"><span class="text-bd-500 font-bold">•</span> National digital agriculture platform (mobile-centric advisory)</li>
+                    <li class="flex gap-2"><span class="text-bd-500 font-bold">•</span> Market linkages rewarding sustainably produced goods</li>
+                    <li class="flex gap-2"><span class="text-bd-500 font-bold">•</span> Inclusive design: voice UI, USSD — closing the digital divide</li>
+                    <li class="flex gap-2"><span class="text-bd-500 font-bold">•</span> AI/ML demand forecasting &amp; early warning</li>
+                    <li class="flex gap-2"><span class="text-bd-500 font-bold">•</span> Voluntary land consolidation/leasing for economies of scale</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= PART IV — THE BLOOM ================= -->
+<section id="bloom" class="py-20 gradient-bloom text-white relative overflow-hidden">
+    <div class="absolute top-16 right-10 w-64 h-64 rounded-full bg-rb-500/30 blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-gold-400/10 blur-3xl"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[11px] font-bold uppercase tracking-widest mb-4">
+                <i data-lucide="flower-2" class="w-3 h-3"></i> Part IV
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-display font-extrabold mb-3">The Bloom</h2>
+            <p class="font-bangla text-xl text-gold-200 font-semibold mb-2">সমৃদ্ধি: কৃষকের মর্যাদা, সার্বভৌম খাদ্য নিরাপত্তা</p>
+            <p class="text-white/80 max-w-2xl mx-auto">A future of precision agriculture, farmer dignity, environmental recovery and sovereign food security</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-16" data-aos="fade-up">
+            <div class="p-7 rounded-3xl glass">
+                <h4 class="font-extrabold text-lg mb-4 flex items-center gap-2"><i data-lucide="user-check" class="w-5 h-5 text-rb-300"></i>The Farmer's Experience</h4>
+                <p class="text-white/85 text-sm leading-relaxed">
+                    A farmer in Bhurungamari walks to the authorized dealer, places her thumb on the biometric scanner, and receives her exact entitlement of urea and DAP — calculated from her <strong>soil test results and crop declaration</strong> — at the government-fixed price. The transaction takes <strong class="text-gold-200">under 10 minutes</strong>. No queue. No black market. No uncertainty.
+                </p>
+            </div>
+            <div class="p-7 rounded-3xl glass">
+                <h4 class="font-extrabold text-lg mb-4 flex items-center gap-2"><i data-lucide="monitor" class="w-5 h-5 text-gold-300"></i>The System's Reality</h4>
+                <p class="text-white/85 text-sm leading-relaxed">
+                    The Ministry tracks every kilogram from import/production to final farmer sale on a national digital ledger. Policy becomes <strong>evidence-based, not reactive</strong>. The subsidy bill declines as efficiency improves. Nitrate runoff falls, soils recover, and the Padma-Meghna basins heal. <strong class="text-gold-200">The environment recovers.</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- SDG + FAO -->
+        <div class="mb-14" data-aos="fade-up">
+            <h3 class="text-xl font-extrabold text-center mb-6">Sustainable Development Goal Alignment</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div class="p-4 rounded-2xl glass text-center card-hover"><div class="text-3xl mb-1">🎯</div><div class="font-extrabold text-sm">SDG 1</div><div class="text-[11px] text-white/70">No Poverty</div></div>
+                <div class="p-4 rounded-2xl glass text-center card-hover"><div class="text-3xl mb-1">🌾</div><div class="font-extrabold text-sm">SDG 2</div><div class="text-[11px] text-white/70">Zero Hunger</div></div>
+                <div class="p-4 rounded-2xl glass text-center card-hover"><div class="text-3xl mb-1">♻️</div><div class="font-extrabold text-sm">SDG 12</div><div class="text-[11px] text-white/70">Responsible Production</div></div>
+                <div class="p-4 rounded-2xl glass text-center card-hover"><div class="text-3xl mb-1">🌍</div><div class="font-extrabold text-sm">SDG 13</div><div class="text-[11px] text-white/70">Climate Action</div></div>
+                <div class="p-4 rounded-2xl glass text-center card-hover"><div class="text-3xl mb-1">🌱</div><div class="font-extrabold text-sm">SDG 15</div><div class="text-[11px] text-white/70">Life on Land</div></div>
+            </div>
+        </div>
+        <div class="text-center" data-aos="fade-up">
+            <h3 class="text-xl font-extrabold mb-5">FAO "Four Betters" Alignment</h3>
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="px-5 py-2.5 rounded-full glass text-sm font-semibold card-hover">🌿 Better Production</span>
+                <span class="px-5 py-2.5 rounded-full glass text-sm font-semibold card-hover">🍚 Better Nutrition</span>
+                <span class="px-5 py-2.5 rounded-full glass text-sm font-semibold card-hover">💧 Better Environment</span>
+                <span class="px-5 py-2.5 rounded-full glass text-sm font-semibold card-hover">👨‍🌾 Better Life</span>
+            </div>
+            <p class="mt-8 text-sm text-white/70 max-w-3xl mx-auto leading-relaxed">
+                <strong class="text-white">Agriculture Diplomacy:</strong> deepen DBT-PoS cooperation with India, precision-rice exchange with Vietnam,
+                digital rural infrastructure learning with China, and land-digitization partnership with South Korea — positioning Bangladesh as a leader
+                in South Asian agricultural governance across SAARC and BIMSTEC forums.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= ROADMAP ================= -->
+<section id="roadmap" class="py-20 bg-white dark:bg-[#0b1a14]">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-[11px] font-bold uppercase tracking-widest mb-4">
+                <i data-lucide="map" class="w-3 h-3"></i> Part V
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-display font-extrabold text-gray-900 dark:text-white">Implementation Roadmap</h2>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">Four-Stage Phased Approach — 60 Months to Full Transformation</p>
+        </div>
+
+        <div class="timeline-line pl-14 space-y-10">
+            <div class="relative" data-aos="fade-up">
+                <div class="absolute -left-14 top-0 w-12 h-12 rounded-full gradient-burden flex items-center justify-center text-white font-extrabold shadow-lg shadow-rb-500/40 border-4 border-white dark:border-gray-900">I</div>
+                <div class="p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-rb-200 dark:border-rb-900 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <h4 class="font-extrabold text-lg">Phase I — Foundation</h4>
+                        <span class="px-3 py-1 rounded-full bg-rb-100 dark:bg-rb-900/40 text-rb-700 dark:text-rb-300 text-xs font-bold">Months 1–12</span>
+                    </div>
+                    <ul class="grid sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li>• Enact implementing rules of the 2026 Dealer Policy with digital compliance mandates</li>
+                        <li>• Pilot biometric PoS in 2 divisions</li>
+                        <li>• Integrate Krishak Card with NID + initial BDS land parcels</li>
+                        <li>• Launch Soil Health Card sampling in pilot upazilas</li>
+                        <li>• Establish local server nodes in pilot unions</li>
+                        <li>• KrishiChain Phase 1 — 50 dealers, $219K (95% transaction capture)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="relative" data-aos="fade-up">
+                <div class="absolute -left-14 top-0 w-12 h-12 rounded-full gradient-gold flex items-center justify-center text-white font-extrabold shadow-lg shadow-gold-500/40 border-4 border-white dark:border-gray-900">II</div>
+                <div class="p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-gold-200 dark:border-gold-900 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <h4 class="font-extrabold text-lg">Phase II — Integration</h4>
+                        <span class="px-3 py-1 rounded-full bg-gold-100 dark:bg-gold-900/40 text-gold-800 dark:text-gold-200 text-xs font-bold">Months 13–24</span>
+                    </div>
+                    <ul class="grid sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li>• Nationwide biometric PoS + e-Bill rollout (India model)</li>
+                        <li>• Fertilizer quotas linked to verified land area &amp; crop type</li>
+                        <li>• Mobile crop declaration + pre-booking app deployed</li>
+                        <li>• Satellite NDVI verification for Boro season</li>
+                        <li>• Public transparency dashboard activated</li>
+                        <li>• KrishiChain Phase 2 — $850K (20% fraud reduction)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="relative" data-aos="fade-up">
+                <div class="absolute -left-14 top-0 w-12 h-12 rounded-full bg-bd-600 flex items-center justify-center text-white font-extrabold shadow-lg shadow-bd-600/40 border-4 border-white dark:border-gray-900">III</div>
+                <div class="p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-200 dark:border-bd-800 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <h4 class="font-extrabold text-lg">Phase III — Optimization</h4>
+                        <span class="px-3 py-1 rounded-full bg-bd-100 dark:bg-bd-900/40 text-bd-700 dark:text-bd-300 text-xs font-bold">Months 25–36</span>
+                    </div>
+                    <ul class="grid sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li>• e-Voucher pilots transition subsidy from companies to farmers (MFS rails)</li>
+                        <li>• Soil Health Card national coverage (1M+ cards)</li>
+                        <li>• AI/ML demand forecasting introduced</li>
+                        <li>• Domestic production strengthened — import share 70% → 50%</li>
+                        <li>• KrishiChain Phase 3 — 5,000 dealers, $1.85M (10% NUE gain nationwide)</li>
+                        <li>• BADC MIS fully integrated</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="relative" data-aos="fade-up">
+                <div class="absolute -left-14 top-0 w-12 h-12 rounded-full gradient-bloom flex items-center justify-center text-white font-extrabold shadow-lg shadow-bd-700/40 border-4 border-white dark:border-gray-900">IV</div>
+                <div class="p-6 rounded-3xl bg-white dark:bg-gray-900 border-2 border-bd-300 dark:border-bd-700 shadow-sm">
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <h4 class="font-extrabold text-lg">Phase IV — Sustainability</h4>
+                        <span class="px-3 py-1 rounded-full bg-bd-700 text-white text-xs font-bold">Months 37–60</span>
+                    </div>
+                    <ul class="grid sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li>• Full transition to targeted, land-linked entitlements</li>
+                        <li>• Market linkage platforms rewarding sustainable practices</li>
+                        <li>• Independent oversight body established</li>
+                        <li>• Full alignment with SDG 2.4 &amp; FAO Better Production agenda</li>
+                        <li>• Self-sustaining efficiency cycle operational</li>
+                        <li>• South Asian agricultural governance leadership secured</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEL -->
+        <div class="mt-16 overflow-x-auto rounded-2xl shadow-md border border-gray-200 dark:border-gray-800" data-aos="fade-up">
+            <table class="data-table w-full text-sm bg-white dark:bg-gray-900">
+                <thead><tr class="text-white text-left">
+                    <th class="px-5 py-4 font-bold">Outcome</th><th class="px-5 py-4 font-bold">Indicator</th>
+                    <th class="px-5 py-4 font-bold">Baseline</th><th class="px-5 py-4 font-bold">Target Y3</th>
+                    <th class="px-5 py-4 font-bold">Target Y5</th><th class="px-5 py-4 font-bold">Data Source</th>
+                </tr></thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tr><td class="px-5 py-3 font-semibold">Transparent Distribution</td><td class="px-5 py-3">% sales via biometric PoS</td><td class="px-5 py-3 text-rb-600 font-bold">0%</td><td class="px-5 py-3">60%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">95%</td><td class="px-5 py-3">Central Digital Ledger</td></tr>
+                    <tr><td class="px-5 py-3 font-semibold">Equitable Access</td><td class="px-5 py-3">% subsidy to bottom 40%</td><td class="px-5 py-3 text-rb-600 font-bold">15%</td><td class="px-5 py-3">30%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">40%+</td><td class="px-5 py-3">Krishak Card + MFS</td></tr>
+                    <tr><td class="px-5 py-3 font-semibold">Dealer Accountability</td><td class="px-5 py-3">% stock lifted ≤15 days</td><td class="px-5 py-3 text-rb-600 font-bold">45%</td><td class="px-5 py-3">85%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">95%</td><td class="px-5 py-3">iFMS-style system</td></tr>
+                    <tr><td class="px-5 py-3 font-semibold">Efficiency</td><td class="px-5 py-3">NUE improvement index</td><td class="px-5 py-3">Baseline TBD</td><td class="px-5 py-3">+10%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">+20%</td><td class="px-5 py-3">Soil test + yield data</td></tr>
+                    <tr><td class="px-5 py-3 font-semibold">Farmer Satisfaction</td><td class="px-5 py-3">% receiving at official price</td><td class="px-5 py-3 text-rb-600 font-bold">&lt;50%</td><td class="px-5 py-3">85%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">95%</td><td class="px-5 py-3">Farmer survey</td></tr>
+                    <tr><td class="px-5 py-3 font-semibold">Fiscal Integrity</td><td class="px-5 py-3">Subsidy leakage rate</td><td class="px-5 py-3 text-rb-600 font-bold">High</td><td class="px-5 py-3">&lt;10%</td><td class="px-5 py-3 text-bd-700 dark:text-bd-300 font-bold">&lt;5%</td><td class="px-5 py-3">Audit + blockchain trace</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ================= COST-BENEFIT ================= -->
+<section class="py-20 bg-bd-50/50 dark:bg-bd-950/30">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <h2 class="text-3xl font-display font-extrabold text-grad-green">Cost-Benefit Analysis</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">Reform pays for itself within 2–3 fiscal cycles</p>
+        </div>
+        <div class="grid lg:grid-cols-2 gap-8">
+            <div class="p-7 rounded-3xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm" data-aos="fade-right">
+                <h4 class="font-bold mb-4">Current State vs. Post-Reform Target (Year 5)</h4>
+                <canvas id="impactChart" height="300"></canvas>
+            </div>
+            <div class="space-y-3" data-aos="fade-left">
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-bd-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">Subsidy Leakage Reduction</span>
+                    <span class="font-extrabold text-bd-700 dark:text-bd-300">Tk 2,000–3,000 Cr/yr saved</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-bd-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">Bottom 40% Subsidy Share</span>
+                    <span class="font-extrabold text-bd-700 dark:text-bd-300">15% → 40%+</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-gold-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">NUE Improvement</span>
+                    <span class="font-extrabold text-gold-600 dark:text-gold-400">+15–20%</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-gold-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">Dealer Stock Lifting Compliance</span>
+                    <span class="font-extrabold text-gold-600 dark:text-gold-400">45% → 95%</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-rb-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">Farmer Transaction Time</span>
+                    <span class="font-extrabold text-rb-600 dark:text-rb-400">Hours → &lt;10 min</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border-l-4 border-rb-500 shadow-sm flex justify-between items-center">
+                    <span class="text-sm font-semibold">KrishiChain Pilot ROI (Year 1)</span>
+                    <span class="font-extrabold text-rb-600 dark:text-rb-400">72:1 • &lt;1 month payback</span>
+                </div>
+                <div class="p-5 rounded-2xl gradient-bloom text-white shadow-md">
+                    <p class="text-sm leading-relaxed"><strong>Net Position:</strong> Modest capital outlay (biometric PoS, local servers, soil testing expansion) — recoverable via public-private partnership. <strong>Reform pays for itself through leakage reduction and efficiency gains within 2–3 fiscal cycles.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= RECOMMENDATIONS ================= -->
+<section id="recommendations" class="py-20 gradient-burden text-white relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background-image:repeating-linear-gradient(45deg,#fff 0 1px,transparent 1px 30px);"></div>
+    <div class="max-w-5xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full glass text-[11px] font-bold uppercase tracking-widest mb-4">
+                <i data-lucide="zap" class="w-3 h-3"></i> Part VI
+            </span>
+            <h2 class="text-3xl sm:text-4xl font-display font-extrabold mb-3">Immediate Ministerial Recommendations</h2>
+            <p class="font-bangla text-gold-200 font-semibold">মাননীয় মন্ত্রীর অবিলম্ব কার্যক্রম গ্রহণের জন্য সুপারিশ</p>
+        </div>
+
+        <div class="space-y-4" data-aos="fade-up">
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">1</span>
+                <div><h4 class="font-bold mb-1">Issue Biometric PoS Circular</h4><p class="text-sm text-white/80">Direct the Secretary of Agriculture to mandate biometric PoS piloting in <strong>all divisions within 90 days</strong>, using Krishak Card and NID authentication.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">2</span>
+                <div><h4 class="font-bold mb-1">Link Stock Allocation to Land Data</h4><p class="text-sm text-white/80">Instruct BADC &amp; DAE to integrate allocation data with the BDS/EDLMS land parcel database — quotas <strong>land-linked by the upcoming Boro season</strong>.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">3</span>
+                <div><h4 class="font-bold mb-1">Enforce 2026 Dealer Policy with Automatic Suspension</h4><p class="text-sm text-white/80">Empower the Agriculture Secretary: <strong>automatic suspension</strong> — not warnings — for dealers failing to lift stocks or selling above MRP.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">4</span>
+                <div><h4 class="font-bold mb-1">Approve e-Voucher Pilot in 2 Districts</h4><p class="text-sm text-white/80">Request Finance Division to transition subsidy delivery <strong>from companies to farmers</strong> via MFS rails.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">5</span>
+                <div><h4 class="font-bold mb-1">Establish Independent Oversight Committee</h4><p class="text-sm text-white/80">Farmer leaders, civil society and technical experts publishing <strong>quarterly transparency reports</strong>.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">6</span>
+                <div><h4 class="font-bold mb-1">Deliver 1 Million Soil Health Cards in 18 Months</h4><p class="text-sm text-white/80">Task SRDI, starting with the <strong>most fertilizer-intensive rice belts</strong>.</p></div>
+            </div>
+            <div class="p-5 rounded-2xl glass flex items-start gap-4 card-hover">
+                <span class="w-9 h-9 rounded-full bg-white text-rb-600 flex items-center justify-center flex-shrink-0 font-extrabold shadow">7</span>
+                <div><h4 class="font-bold mb-1">Approve KrishiChain BD Pilot — $219,450</h4><p class="text-sm text-white/80">Immediate commencement in Chattogram &amp; Khulna; Phase 2 funding contingent on <strong>95% transaction capture rate</strong>.</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= ZIA LEGACY ================= -->
+<section class="py-16 bg-[#002b20] text-white">
+    <div class="max-w-4xl mx-auto px-6 text-center" data-aos="fade-up">
+        <div class="flag-disc mx-auto mb-8" style="width:80px;height:80px;">
+            <div class="ring"></div>
+            <div class="absolute inset-0 flex items-center justify-center"><i data-lucide="flag" class="w-8 h-8 text-white"></i></div>
+        </div>
+        <h3 class="text-2xl font-display font-extrabold mb-4">Walking the Path of Bir Uttam President Ziaur Rahman</h3>
+        <p class="text-white/75 leading-relaxed mb-6 text-sm sm:text-base">
+            The Father of Bangladeshi Nationalism sought not merely political sovereignty but <strong class="text-gold-300">economic dignity for the Krishak</strong> —
+            a disciplined, self-reliant Bangladesh where rural prosperity is a matter of institutional justice. A warehouse full of fertilizer means nothing
+            if the farmer's hands remain empty. This reform honors that legacy through three nationalist imperatives:
+        </p>
+        <div class="grid sm:grid-cols-3 gap-4">
+            <div class="p-5 rounded-2xl glass"><div class="text-2xl mb-2">⚖️</div><h4 class="font-bold text-sm mb-1">Discipline in Governance</h4><p class="text-xs text-white/70">Biometric PoS, blockchain ledger and public dashboards hold officer, dealer and minister accountable to the farmer.</p></div>
+            <div class="p-5 rounded-2xl glass"><div class="text-2xl mb-2">🌾</div><h4 class="font-bold text-sm mb-1">Empowerment, Not Dependency</h4><p class="text-xs text-white/70">Land-linked, soil-tested entitlements treat farmers as rational stewards — not recipients of charity.</p></div>
+            <div class="p-5 rounded-2xl glass"><div class="text-2xl mb-2">🇧🇩</div><h4 class="font-bold text-sm mb-1">Self-Reliance</h4><p class="text-xs text-white/70">Reviving domestic production and leveraging our own digital rails builds a sovereign, future-proof food system.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= CONCLUSION ================= -->
+<section class="py-20 hero-bg text-white relative overflow-hidden">
+    <div class="absolute top-10 left-10 w-56 h-56 rounded-full bg-rb-500/25 blur-3xl"></div>
+    <div class="max-w-4xl mx-auto px-6 text-center relative z-10" data-aos="fade-up">
+        <i data-lucide="sprout" class="w-16 h-16 text-bd-300 mx-auto mb-6 floaty"></i>
+        <h2 class="text-3xl sm:text-5xl font-display font-extrabold mb-6 leading-tight">
+            The Decision Is Pending.<br><span class="text-gold-300">The Time Is Now.</span>
+        </h2>
+        <div class="space-y-4 text-lg text-white/85 leading-relaxed mb-10 max-w-3xl mx-auto">
+            <p>Bangladesh stands at a crossroads. One path leads deeper into crisis, subsidy escalation, black-market profiteering and farmer despair.</p>
+            <p>The other path — illuminated by Asia's experience and powered by our own digital infrastructure — leads toward <strong class="text-bd-300">transparency, accountability, precision and dignity</strong>.</p>
+            <p>The technology is ready. The policy framework exists. The regional evidence is clear. <strong class="text-white">The farmer is waiting. The nation is watching.</strong></p>
+        </div>
+        <div class="p-6 rounded-2xl glass mb-10 max-w-3xl mx-auto">
+            <blockquote class="text-lg sm:text-xl italic leading-relaxed">
+                "The ultimate measure of fertilizer security is not how much fertilizer Bangladesh has in its warehouses. It is whether a farmer can obtain the right fertiliser, at the right price, at the right place, at the right time."
+            </blockquote>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="#executive" class="px-8 py-3.5 bg-rb-500 hover:bg-rb-600 text-white font-bold rounded-xl transition-all shadow-xl shadow-rb-500/30">Return to Executive Summary</a>
+            <button onclick="window.print()" class="px-8 py-3.5 border-2 border-white/40 text-white font-bold rounded-xl hover:bg-white/10 transition-all">
+                <i data-lucide="printer" class="w-4 h-4 inline mr-2 -mt-0.5"></i>Print Ministerial Briefing
+            </button>
+        </div>
+    </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="py-10 bg-[#002b20] border-t-4 border-rb-500 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+        <div class="flex justify-center mb-4">
+            <div class="w-8 h-8 rounded-full bg-rb-500 shadow-lg"></div>
+        </div>
+        <p class="text-sm text-white/70 font-semibold">
+            গণপ্রজাতন্ত্রী বাংলাদেশ সরকার • Ministry of Agriculture<br>
+            Office of the Strategic Planning Unit | September 2026
+        </p>
+        <p class="text-xs text-white/40 mt-3 max-w-2xl mx-auto">
+            Classification: Official / Ministerial Briefing. Synthesized from "Learning from Asia: A Blueprint for Sustainable Fertilizer Management in Bangladesh's Smallholder Farms" (Feb 2026), the KrishiChain BD Digital Transformation Pilot Proposal, and the Comprehensive Strategic Report on Fertilizer Distribution Reform (Sept 2026). Based on verified government data, World Bank assessments and comparative regional analysis.
+        </p>
+    </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    AOS.init({ duration:800, easing:'ease-in-out', once:true, offset:90 });
+    lucide.createIcons();
+
+    window.addEventListener('scroll', () => {
+        const p = window.pageYOffset / (document.body.scrollHeight - window.innerHeight) * 100;
+        document.getElementById('progressBar').style.width = p + '%';
+    });
+
+    const GREEN='#006A4E', GREEN_L='#2ba577', RED='#F42A41', RED_D='#bb0d28', GOLD='#e3b240';
+    Chart.defaults.font.family = "system-ui, sans-serif";
+
+    const nue = document.getElementById('nueChart');
+    if(nue) new Chart(nue,{
+        type:'bar',
+        data:{ labels:['China 2000','China 2020','India 2000','India 2020','BD Target'],
+            datasets:[{ label:'NUE (%)', data:[61,50,50,42,50],
+                backgroundColor:[RED_D,RED,GOLD,'#da9c26',GREEN], borderRadius:10, borderSkipped:false }] },
+        options:{ responsive:true, plugins:{ legend:{display:false},
+            tooltip:{ callbacks:{ label:c=>' NUE: '+c.parsed.y+'%' } } },
+            scales:{ y:{ beginAtZero:true, max:70, ticks:{ callback:v=>v+'%' }, grid:{ color:'rgba(0,106,78,.08)' } }, x:{ grid:{display:false} } } }
+    });
+
+    const sub = document.getElementById('subsidyChart');
+    if(sub) new Chart(sub,{
+        type:'doughnut',
+        data:{ labels:['Top 20% landowners (~50%)','Middle 40% (~35%)','Bottom 40% (~15%)'],
+            datasets:[{ data:[50,35,15], backgroundColor:[RED,GOLD,GREEN], borderWidth:3, borderColor:'#fff', hoverOffset:8 }] },
+        options:{ responsive:true, cutout:'62%', plugins:{ legend:{ position:'bottom', labels:{ padding:16, usePointStyle:true } } } }
+    });
+
+    const imp = document.getElementById('impactChart');
+    if(imp) new Chart(imp,{
+        type:'radar',
+        data:{ labels:['Leakage Control','Equity (Bottom 40%)','NUE Gain','Dealer Compliance','Farmer Satisfaction','Fiscal Savings'],
+            datasets:[
+                { label:'Current State', data:[20,15,5,45,50,20], borderColor:RED, backgroundColor:'rgba(244,42,65,.12)', pointBackgroundColor:RED, borderWidth:2 },
+                { label:'Post-Reform (Y5)', data:[95,40,25,95,95,85], borderColor:GREEN, backgroundColor:'rgba(0,106,78,.12)', pointBackgroundColor:GREEN, borderWidth:2 }
+            ] },
+        options:{ responsive:true, scales:{ r:{ beginAtZero:true, max:100, grid:{ color:'rgba(0,106,78,.15)' }, angleLines:{ color:'rgba(0,106,78,.15)' }, pointLabels:{ font:{size:11,weight:'600'} } } },
+            plugins:{ legend:{ position:'bottom', labels:{ usePointStyle:true, padding:16 } } } }
+    });
+});
+</script>
+
+<!-- Cross-navigation & download toolbar -->
+<div id="xnav" style="position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;gap:8px;font-family:system-ui,sans-serif;">
+  <a href="../briefing/" style="background:#7c2d12;color:#fff;padding:10px 14px;border-radius:8px;text-decoration:none;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3);">📄 Ministerial Briefing</a>
+  <button onclick="window.print()" style="background:#9a3412;color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);">⬇ PDF (Print)</button>
+  <button onclick="downloadDocx()" style="background:#c2410c;color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);">⬇ DOCX</button>
+</div>
+<script>
+function downloadDocx(){
+  var head='<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
+  var b=document.body.cloneNode(true);var x=b.querySelector('#xnav');if(x)x.remove();
+  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>'+head+'</head><body>'+b.innerHTML+'</body></html>';
+  var blob=new Blob(['\ufeff'+h,{type:'application/msword'}]);
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='Fertilizer_Strategic_Dashboard_Burden_to_Bloom.doc';
+  document.body.appendChild(a);a.click();a.remove();
+}
+</script>
+</body>
+</html>

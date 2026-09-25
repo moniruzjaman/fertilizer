@@ -1,0 +1,7 @@
+site/
+node_modules/
+tools/site-builder/node_modules/
+playwright-report/
+test-results/
+*.log
+.DS_Store
