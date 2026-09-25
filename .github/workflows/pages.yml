@@ -35,7 +35,7 @@ jobs:
           cache-dependency-path: tools/site-builder/package-lock.json
 
       - name: Install PDF raster tools
-        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils fonts-dejavu-core fontconfig
 
       - name: Install builder
         working-directory: tools/site-builder

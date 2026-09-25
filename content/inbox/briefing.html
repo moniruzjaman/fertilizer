@@ -8,18 +8,20 @@
   :root {
     --bangladesh-green: #006A4E;
     --bangladesh-red: #F42A41;
-    --gold: #C5A028;
-    --dark: #1a1a2e;
-    --light-bg: #f8f9fa;
-    --text: #2d3436;
-    --border: #dfe6e9;
+    --gold: #F9D342;
+    --dark: #004D38;
+    --light-bg: #ffffff;
+    --text: #004D38;
+    --border: #d7e6df;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700;800;900&family=Noto+Serif:wght@700;800&display=swap");
   body {
-    font-family: 'Segoe UI', Georgia, 'Times New Roman', serif;
+    font-family: "Noto Sans", "Segoe UI", sans-serif;
     line-height: 1.75;
     color: var(--text);
     background: #fff;
+    font-weight: 700;
   }
   .page {
     max-width: 900px;
@@ -55,18 +57,21 @@
     box-shadow: 0 4px 15px rgba(0,106,78,0.3);
   }
   .cover h1 {
-    font-size: 26px;
+    font-size: 32px;
     color: var(--bangladesh-green);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     margin-bottom: 10px;
+    font-family: "Noto Serif", "Noto Sans", serif;
+    font-weight: 800;
   }
   .cover .subtitle {
-    font-size: 18px;
+    font-size: 20px;
     color: var(--bangladesh-red);
-    font-weight: 600;
+    font-weight: 800;
     margin-bottom: 30px;
-    font-style: italic;
+    font-style: normal;
+    letter-spacing: .04em;
   }
   .cover .meta {
     font-size: 13px;
@@ -92,13 +97,14 @@
     border-left: 5px solid var(--bangladesh-green);
   }
   .toc h2 {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--bangladesh-green);
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 3px solid var(--gold);
     padding-bottom: 10px;
+    font-weight: 800;
   }
   .toc ul { list-style: none; }
   .toc li {
@@ -121,20 +127,23 @@
   }
   /* Headings */
   h2 {
-    font-size: 20px;
+    font-size: 24px;
     color: var(--bangladesh-green);
     margin: 45px 0 18px;
     padding-bottom: 8px;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 4px solid var(--gold);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-family: "Noto Serif", "Noto Sans", serif;
+    font-weight: 800;
   }
   h3 {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--dark);
     margin: 28px 0 12px;
     padding-left: 15px;
-    border-left: 4px solid var(--bangladesh-red);
+    border-left: 5px solid var(--bangladesh-red);
+    font-weight: 800;
   }
   h4 {
     font-size: 14px;
@@ -160,10 +169,10 @@
     color: #fff;
     padding: 12px 14px;
     text-align: left;
-    font-weight: 600;
+    font-weight: 800;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
   }
   td {
     padding: 11px 14px;

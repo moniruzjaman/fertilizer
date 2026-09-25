@@ -55,11 +55,14 @@ export function slimNav(pages, config, currentSlug) {
   ].join("");
   return `<nav class="site-slim-nav" aria-label="Site"><a class="site-slim-brand" href="${home}">Fertilizer</a><div class="site-slim-links">${links}</div></nav>
 <style>
-.site-slim-nav{position:sticky;top:0;z-index:2147483000;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:10px 18px;background:#006A4E;color:#fff;font:600 14px/1.3 system-ui,sans-serif;box-shadow:0 2px 10px rgba(0,0,0,.18)}
-.site-slim-nav a{color:#fff;text-decoration:none;opacity:.92}
-.site-slim-brand{letter-spacing:.04em;text-transform:uppercase;font-size:12px}
-.site-slim-links{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}
-.site-slim-nav a.is-current{color:#eac96a}
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700;800;900&display=swap");
+.site-slim-nav{position:sticky;top:0;z-index:2147483000;display:flex;gap:16px;align-items:center;justify-content:space-between;padding:12px 20px;background:#006A4E;color:#fff;font:800 14px/1.25 "Noto Sans",system-ui,sans-serif;border-bottom:4px solid #F42A41;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.site-slim-nav::after{content:"";position:absolute;left:0;right:0;bottom:-8px;height:4px;background:#F9D342}
+.site-slim-nav{position:sticky}
+.site-slim-nav a{color:#fff;text-decoration:none}
+.site-slim-brand{letter-spacing:.14em;text-transform:uppercase;font-size:13px;color:#F9D342;font-weight:900}
+.site-slim-links{display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-end}
+.site-slim-nav a.is-current{color:#F9D342;border-bottom:3px solid #F42A41;padding-bottom:2px}
 </style>`;
 }
 
@@ -67,7 +70,7 @@ export function catalogHtml(pages, config) {
   const cards = pages.map((p) => {
     const href = hrefTo("", p.slug);
     const img = `${p.slug}/og.png`;
-    const badge = p.type === "pdf" ? "PDF" : p.type === "rich-html" ? "Page" : "Note";
+    const badge = p.type === "pdf" ? "PDF" : /dashboard/i.test(p.slug) || /dashboard/i.test(p.title) ? "Dashboard" : p.type === "rich-html" ? "Report" : "Note";
     return `<a class="card" href="${href}">
       <img src="${img}" alt="" width="1200" height="630">
       <div class="body">
@@ -96,9 +99,9 @@ export function catalogHtml(pages, config) {
 <body>
 ${slimNav(pages, config, "")}
 <header class="hero">
-  <p class="kicker">Ministry of Agriculture, Bangladesh</p>
+  <p class="kicker">Ministry of Agriculture · Bangladesh</p>
   <h1>Fertilizer Management</h1>
-  <p>Burden to Bloom — drop a PDF or HTML into content/inbox and it becomes a page here.</p>
+  <p class="tagline">Burden to Bloom</p>
 </header>
 <main class="catalog">${cards || "<p>No documents yet.</p>"}</main>
 </body>
@@ -212,27 +215,37 @@ export function robotsTxt(config) {
 }
 
 export function siteCss() {
-  return `*{box-sizing:border-box}body{margin:0;font-family:Georgia,system-ui,serif;color:#2d3436;background:#f8f9fa}
-.hero{background:#006A4E;color:#fff;padding:48px 24px 36px;text-align:center}
-.hero .kicker{letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#eac96a}
-.hero h1{margin:8px 0;font-size:36px}
-.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:28px;max-width:1100px;margin:0 auto}
-.card{background:#fff;border:1px solid #dfe6e9;border-radius:12px;overflow:hidden;color:inherit;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-.card img{display:block;width:100%;height:auto;background:#004230}
-.card .body{padding:16px}
-.badge{display:inline-block;background:#006A4E;color:#fff;font:600 11px/1 system-ui,sans-serif;padding:4px 8px;border-radius:999px}
+  return `@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700;800;900&family=Noto+Serif:wght@700;800&display=swap");
+:root{--bd-green:#006A4E;--bd-green-deep:#004D38;--bd-red:#F42A41;--bd-gold:#F9D342;--bd-white:#FFFFFF}
+*{box-sizing:border-box}body{margin:0;font-family:"Noto Sans",system-ui,sans-serif;color:#004D38;background:#fff;font-weight:700}
+.hero{background:linear-gradient(180deg,#006A4E 0%,#004D38 100%);color:#fff;padding:56px 24px 44px;text-align:center;border-bottom:8px solid #F42A41;position:relative}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:-16px;height:8px;background:#F9D342}
+.hero .kicker{letter-spacing:.22em;text-transform:uppercase;font-size:13px;color:#F9D342;font-weight:800}
+.hero h1{margin:10px 0 8px;font-size:48px;font-weight:900;letter-spacing:.02em;font-family:"Noto Serif","Noto Sans",serif}
+.hero .tagline{margin:0;font-size:22px;color:#fff;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;padding:40px 28px 48px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border:3px solid #006A4E;border-radius:6px;overflow:hidden;color:#004D38;text-decoration:none;box-shadow:0 10px 24px rgba(0,106,78,.12)}
+.card:hover{border-color:#F42A41;box-shadow:0 12px 28px rgba(244,42,65,.18)}
+.card img{display:block;width:100%;height:auto;background:#006A4E}
+.card .body{padding:18px 18px 22px;border-top:6px solid #F9D342}
+.card h2{margin:10px 0 8px;font-size:22px;font-weight:900;line-height:1.2;font-family:"Noto Serif","Noto Sans",serif}
+.card p{margin:0;font-size:15px;font-weight:700;color:#004D38}
+.card time{display:block;margin-top:10px;color:#F42A41;font-weight:800;letter-spacing:.04em}
+.badge{display:inline-block;background:#F42A41;color:#fff;font:800 11px/1 "Noto Sans",system-ui,sans-serif;padding:6px 10px;border-radius:4px;letter-spacing:.12em;text-transform:uppercase}
 .prose{max-width:820px;margin:24px auto;padding:0 20px 48px;background:#fff}
-.reader-body{background:#111}
+.prose h1,.prose h2{font-family:"Noto Serif","Noto Sans",serif;font-weight:800;color:#006A4E}
+.reader-body{background:#004D38}
 .reader{display:flex;flex-direction:column;min-height:100vh}
-.toolbar{position:sticky;top:42px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;background:#1a1a2e;color:#fff}
-.toolbar button,.toolbar .btn, .btn{background:#006A4E;color:#fff;border:0;border-radius:6px;padding:8px 10px;text-decoration:none;font:600 13px system-ui;cursor:pointer}
-.toolbar input{flex:1;min-width:120px;padding:8px;border-radius:6px;border:0}
+.toolbar{position:sticky;top:52px;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:#006A4E;color:#fff;border-bottom:4px solid #F42A41}
+.toolbar button,.toolbar .btn, .btn{background:#F42A41;color:#fff;border:0;border-radius:4px;padding:9px 12px;text-decoration:none;font:800 13px "Noto Sans",system-ui;cursor:pointer;letter-spacing:.04em;text-transform:uppercase}
+.toolbar .btn{background:#F9D342;color:#004D38}
+.toolbar input{flex:1;min-width:120px;padding:8px;border-radius:4px;border:2px solid #F9D342;font-weight:700}
 .reader-main{display:flex;min-height:0;flex:1}
-.outline{width:240px;background:#222;color:#eee;overflow:auto;padding:12px}
-.stage-wrap{flex:1;overflow:auto;display:flex;justify-content:center;padding:16px}
+.outline{width:240px;background:#004D38;color:#fff;overflow:auto;padding:12px;font-weight:700}
+.stage-wrap{flex:1;overflow:auto;display:flex;justify-content:center;padding:16px;background:#fff}
 .stage{max-width:100%;background:#fff;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-.reader-error{padding:40px;text-align:center;color:#fff}
-@media(max-width:700px){.outline{position:absolute;height:100%;z-index:4}}`;
+.reader-error{padding:40px;text-align:center;color:#fff;font-weight:800}
+@media(max-width:700px){.outline{position:absolute;height:100%;z-index:4}.hero h1{font-size:34px}}`;
 }
 
 export function readerJs() {
