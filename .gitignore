@@ -1,7 +1,6 @@
-site/
+# Dependencies
 node_modules/
-tools/site-builder/node_modules/
-playwright-report/
-test-results/
-*.log
-.DS_Store
+
+# Build artifacts
+dist/
+build/

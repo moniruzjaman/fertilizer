@@ -63,25 +63,3 @@ export function resolveMeta({ filename, yamlMeta = {}, htmlMeta = {}, pdfMeta = 
     noindex: Boolean(yamlMeta.noindex)
   };
 }
-
-export function jsonLd(page, config) {
-  const url = `${config.siteBase}/${page.slug}/`;
-  if (page.type === "pdf") {
-    return {
-      "@context": "https://schema.org",
-      "@type": "DigitalDocument",
-      name: page.title,
-      description: page.description || undefined,
-      url,
-      encodingFormat: "application/pdf",
-      contentUrl: `${config.siteBase}/files/${page.slug}.pdf`
-    };
-  }
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: page.title,
-    description: page.description || undefined,
-    url
-  };
-}

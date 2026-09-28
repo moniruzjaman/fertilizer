@@ -1,13 +1,61 @@
+import { DEFAULT_SITE_BASE, DEFAULT_SITE_NAME, pageUrl, ogUrl } from './config.js';
+
+/** Escape a string for safe interpolation into HTML text and attribute values. */
+export function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function baseUrl(config) {
+  return (config && (config.siteBase || config.siteUrl)) || DEFAULT_SITE_BASE;
+}
+
+function siteName(config) {
+  return (config && config.siteName) || DEFAULT_SITE_NAME;
+}
+
+export function jsonLd(page, config) {
+  const base = baseUrl(config);
+  const url = `${base}/${page.slug}/`;
+  if (page.type === 'pdf') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'DigitalDocument',
+      name: page.title,
+      description: page.description || undefined,
+      url,
+      encodingFormat: 'application/pdf',
+      contentUrl: `${base}/files/${page.slug}.pdf`
+    };
+  }
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: page.title,
+    description: page.description || undefined,
+    url
+  };
+}
+
+export function jsonLdScript(page, config) {
+  const json = JSON.stringify(jsonLd(page, config)).replace(/</g, '\\u003c');
+  return `<script type="application/ld+json">${json}</script>`;
+}
+
 export function seoTags(page, config) {
-  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
-  const siteName = config.siteName || 'Fertilizer Management';
-  const url = `${siteUrl}/${page.slug}/`;
-  const img = `${siteUrl}/${page.slug}/og.png`;
-  const title = page.title || page.slug;
-  const desc = page.description || '';
-  
+  const base = baseUrl(config);
+  const url = pageUrl({ siteBase: base }, page.slug);
+  const img = ogUrl({ siteBase: base }, page.slug);
+  const title = escapeHtml(page.title || page.slug);
+  const desc = escapeHtml(page.description || '');
+
   return `
-    <title>${title} — ${siteName}</title>
+    <title>${title} — ${escapeHtml(siteName(config))}</title>
+    <link rel="canonical" href="${url}">
     <meta name="description" content="${desc}">
     <meta property="og:type" content="article">
     <meta property="og:title" content="${title}">
@@ -21,6 +69,7 @@ export function seoTags(page, config) {
     <meta name="twitter:description" content="${desc}">
     <meta name="twitter:image" content="${img}">
     ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
+    ${jsonLdScript(page, config)}
   `;
 }
 
@@ -28,7 +77,7 @@ export function slimNav(pages, config, currentSlug) {
   const links = (pages || [])
     .filter(p => p && p.slug && p.slug !== currentSlug && !p.noindex)
     .slice(0, 6)
-    .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${p.title || p.slug}</a>`)
+    .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${escapeHtml(p.title || p.slug)}</a>`)
     .join('');
 
   return `
@@ -66,6 +115,10 @@ export function siteCss() {
       background: #fff;
       box-shadow: 0 0 40px rgba(0,0,0,0.08);
     }
+    .page-header { margin-bottom: 24px; }
+    .page-title { font-size: 32px; color: var(--green); margin: 0 0 8px; }
+    .page-date { font-size: 13px; color: #636e72; margin: 0; }
+    .prose > h1:first-child { display: none; }
     h1, h2, h3, h4 { line-height: 1.3; }
     h1 { font-size: 32px; color: var(--green); margin: 30px 0 20px; }
     h2 { font-size: 24px; color: var(--green); margin: 40px 0 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
@@ -143,13 +196,13 @@ ${seoTags(page, config)}
 <body>
 <div class="pdf-container">
   <div class="pdf-header">
-    <h1>${page.title || page.slug}</h1>
+    <h1>${escapeHtml(page.title || page.slug)}</h1>
     <div class="pdf-meta">
-      ${page.description ? `<p>${page.description}</p>` : ''}
-      ${page.date ? `<p>Published: ${new Date(page.date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}</p>` : ''}
+      ${page.description ? `<p>${escapeHtml(page.description)}</p>` : ''}
+      ${page.date ? `<p>Published: ${escapeHtml(formatDate(page.date))}</p>` : ''}
     </div>
   </div>
-  <iframe class="pdf-frame" src="/files/${page.slug}.pdf" title="${page.title || page.slug}"></iframe>
+  <iframe class="pdf-frame" src="/files/${page.slug}.pdf" title="${escapeHtml(page.title || page.slug)}"></iframe>
   <div class="pdf-actions">
     <a href="/files/${page.slug}.pdf" download>⬇ Download PDF</a>
     <a href="/">← Back to Home</a>
@@ -162,22 +215,62 @@ ${seoTags(page, config)}
 
 // ===== FRAGMENT PAGE HTML =====
 
-export function fragmentPageHtml(page, pages, config, innerContent) {
+export function fragmentPageHtml(page, pages, config, innerContent, options = {}) {
+  // Fragments are minimal wrappers: by default they carry no site navigation.
+  const { navigation = false } = options;
+  const title = escapeHtml(page.title || page.slug);
+  const desc = escapeHtml(page.description || '');
+  const base = baseUrl(config);
+  const url = pageUrl({ siteBase: base }, page.slug);
+  const img = ogUrl({ siteBase: base }, page.slug);
+  const dateLine = page.date
+    ? `<p class="page-date">${escapeHtml(formatDate(page.date))}</p>`
+    : '';
+  const nav = navigation ? slimNav(pages, config, page.slug) : '';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-${seoTags(page, config)}
+<title>${title}</title>
+<meta name="description" content="${desc}">
+<link rel="canonical" href="${url}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${desc}">
+<meta property="og:url" content="${url}">
+<meta property="og:image" content="${img}">
+<meta name="twitter:card" content="summary_large_image">
+${jsonLdScript(page, config)}
 <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
 <div class="page">
+  <header class="page-header">
+    <h1 class="page-title">${title}</h1>
+    ${dateLine}
+  </header>
+  <article class="prose">
   ${innerContent}
+  </article>
 </div>
+${nav}
 <script src="/assets/reader.js"></script>
 </body>
 </html>`;
+}
+
+/** Truncate long text with an ellipsis. */
+export function truncate(text, max = 100) {
+  const t = String(text ?? '');
+  return t.length > max ? `${t.slice(0, max)}\u2026` : t;
+}
+
+/** Format an ISO yyyy-mm-dd date as e.g. "2 January 2026"; pass through on failure. */
+export function formatDate(iso) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return String(iso);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 // ===== NOT FOUND HTML =====
@@ -235,7 +328,7 @@ export function redirectHtml(to, label) {
 // ===== ROBOTS TXT =====
 
 export function robotsTxt(config) {
-  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  const siteUrl = baseUrl(config);
   return `User-agent: *
 Allow: /
 Sitemap: ${siteUrl}/sitemap.xml
@@ -245,7 +338,7 @@ Sitemap: ${siteUrl}/sitemap.xml
 // ===== SITEMAP XML =====
 
 export function sitemapXml(pages, config) {
-  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  const siteUrl = baseUrl(config);
   const urls = pages
     .filter(p => !p.noindex)
     .map(p => {
@@ -271,17 +364,6 @@ ${urls}
 </urlset>`;
 }
 
-// ===== INNER HTML EXTRACTOR =====
-
-export function innerHtml(html) {
-  // Extract content between <body> tags, or return full html if no body tag
-  const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-  if (bodyMatch) {
-    return bodyMatch[1].trim();
-  }
-  return html;
-}
-
 // ===== CATALOG HTML (NEW DRAWER VERSION) =====
 
 export function catalogHtml(pages, config) {
@@ -303,15 +385,15 @@ export function catalogHtml(pages, config) {
   };
 
   const pageCard = (p) => `
-    <a href="/${p.slug}/" class="drawer-card" data-type="${p.type}" data-slug="${p.slug}">
+    <a href="${p.slug}/" class="drawer-card" data-type="${p.type}" data-slug="${p.slug}">
       <div class="drawer-card-thumb" style="background-image:url('/${p.slug}/og.png')"></div>
       <div class="drawer-card-body">
         <div class="drawer-card-meta">
           <span class="drawer-card-type">${p.type === 'pdf' ? '📄 PDF' : p.type === 'rich-html' ? '📝 Report' : '📑 Page'}</span>
           ${p.date ? `<span class="drawer-card-date">${new Date(p.date).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}</span>` : ''}
         </div>
-        <h3 class="drawer-card-title">${p.title || p.slug}</h3>
-        ${p.description ? `<p class="drawer-card-desc">${p.description.length > 100 ? p.description.substring(0,100) + '…' : p.description}</p>` : ''}
+        <h3 class="drawer-card-title">${escapeHtml(p.title || p.slug)}</h3>
+        ${p.description ? `<p class="drawer-card-desc">${escapeHtml(truncate(p.description, 100))}</p>` : ''}
       </div>
     </a>
   `;
@@ -331,8 +413,9 @@ export function catalogHtml(pages, config) {
 <meta property="og:site_name" content="Fertilizer Management — Burden to Bloom">
 <meta property="og:title" content="Fertilizer Management — Burden to Bloom">
 <meta property="og:description" content="Strategic briefings, dashboards, and reform documents for Bangladesh's fertilizer distribution system.">
-<meta property="og:url" content="${config.siteUrl || 'https://moniruzjaman.github.io/fertilizer'}/">
-<meta property="og:image" content="${config.siteUrl || 'https://moniruzjaman.github.io/fertilizer'}/social-preview.png">
+<meta property="og:url" content="${baseUrl(config)}/">
+<link rel="canonical" href="${baseUrl(config)}/">
+<meta property="og:image" content="${baseUrl(config)}/social-preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <style>
@@ -890,8 +973,8 @@ export function catalogHtml(pages, config) {
           <div class="featured-card-img" style="background-image:url('/${p.slug}/og.png')"></div>
           <div class="featured-card-body">
             <span class="featured-card-tag briefing">Briefing</span>
-            <h3>${p.title || p.slug}</h3>
-            <p>${p.description ? (p.description.length > 140 ? p.description.substring(0,140) + '…' : p.description) : 'Strategic analysis and recommendations.'}</p>
+            <h3>${escapeHtml(p.title || p.slug)}</h3>
+            <p>${p.description ? escapeHtml(truncate(p.description, 140)) : 'Strategic analysis and recommendations.'}</p>
             <div class="featured-card-footer">Read briefing →</div>
           </div>
         </a>
@@ -901,8 +984,8 @@ export function catalogHtml(pages, config) {
           <div class="featured-card-img" style="background-image:url('/${p.slug}/og.png')"></div>
           <div class="featured-card-body">
             <span class="featured-card-tag dashboard">Dashboard</span>
-            <h3>${p.title || p.slug}</h3>
-            <p>${p.description ? (p.description.length > 140 ? p.description.substring(0,140) + '…' : p.description) : 'Interactive data visualization.'}</p>
+            <h3>${escapeHtml(p.title || p.slug)}</h3>
+            <p>${p.description ? escapeHtml(truncate(p.description, 140)) : 'Interactive data visualization.'}</p>
             <div class="featured-card-footer">Open dashboard →</div>
           </div>
         </a>

@@ -1,4 +1,4 @@
-import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classify } from "./classify.js";
@@ -23,41 +23,51 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+// Legacy URLs that must keep working after the inbox-based redesign.
+export const LEGACY_DASHBOARD_SLUG = "dashboard";
+export const LEGACY_BRIEFING_SLUG = "briefing";
+export const LEGACY_BRIEFING_FILE = "Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html";
+
+async function copyFirstExisting(sources, dest) {
+  for (const src of sources) {
+    try {
+      await cp(src, dest);
+      return true;
+    } catch {
+      continue;
+    }
+  }
+  return false;
+}
+
+async function dirExists(path) {
+  try {
+    return (await stat(path)).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
 async function copyPdfJs(outDir) {
   const dest = join(outDir, "assets", "pdfjs");
   await mkdir(dest, { recursive: true });
-  const candidates = [
-    join(here, "../node_modules/pdfjs-dist/build/pdf.min.mjs"),
-    join(here, "../node_modules/pdfjs-dist/legacy/build/pdf.min.mjs"),
-    join(here, "../node_modules/pdfjs-dist/build/pdf.mjs")
-  ];
-  const workers = [
-    join(here, "../node_modules/pdfjs-dist/build/pdf.worker.min.mjs"),
-    join(here, "../node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs"),
-    join(here, "../node_modules/pdfjs-dist/build/pdf.worker.mjs")
-  ];
-  for (const src of candidates) {
-    try {
-      await cp(src, join(dest, "pdf.min.mjs"));
-      break;
-    } catch {
-      continue;
-    }
-  }
-  for (const src of workers) {
-    try {
-      await cp(src, join(dest, "pdf.worker.min.mjs"));
-      break;
-    } catch {
-      continue;
-    }
-  }
+  const pkg = join(here, "..", "node_modules", "pdfjs-dist");
+  await copyFirstExisting(
+    [join(pkg, "build", "pdf.min.mjs"), join(pkg, "legacy", "build", "pdf.min.mjs"), join(pkg, "build", "pdf.mjs")],
+    join(dest, "pdf.min.mjs")
+  );
+  await copyFirstExisting(
+    [join(pkg, "build", "pdf.worker.min.mjs"), join(pkg, "legacy", "build", "pdf.worker.min.mjs"), join(pkg, "build", "pdf.worker.mjs")],
+    join(dest, "pdf.worker.min.mjs")
+  );
 }
 
 export async function collectPages(config) {
   const files = await scanInbox(config);
-  const used = new Set();
-  const pages = [];
+
+  // Pass 1: read content and resolve each file's *desired* slug (from its own
+  // meta.yaml override or filename), without allocating final slugs yet.
+  const drafts = [];
   for (const file of files) {
     const guessed = slugify(stem(file.filename));
     const extrasGuess = await loadPageExtras(config, guessed);
@@ -89,12 +99,44 @@ export async function collectPages(config) {
       htmlMeta,
       pdfMeta
     });
-    const desired = slugify(resolved.slugOverride || guessed);
-    if (used.has(desired)) {
-      warn(config, `Slug collision for ${file.filename}; using suffix`);
+    drafts.push({
+      file, guessed, extrasGuess, html, pdfMetaRaw, htmlMeta, pdfMeta,
+      slugOverride: resolved.slugOverride,
+      desired: slugify(resolved.slugOverride || guessed)
+    });
+  }
+
+  // Pass 2: reserve explicit meta.yaml slugs first so an authored override
+  // always wins over a filename-derived slug on collision — regardless of
+  // which draft declared it or how the files sort alphabetically.
+  const reserved = new Map(); // desired slug -> draft that owns it
+  const used = new Set();
+  for (const draft of drafts) {
+    if (!draft.slugOverride) continue;
+    if (!reserved.has(draft.desired)) {
+      reserved.set(draft.desired, draft);
+      used.add(draft.desired);
     }
-    const slug = uniqueSlug(desired, used);
-    const extras = slug === guessed ? extrasGuess : await loadPageExtras(config, slug);
+  }
+
+  // Pass 3: allocate final slugs in deterministic order and build pages.
+  const pages = [];
+  for (const draft of drafts) {
+    const { file, guessed, extrasGuess, html, pdfMetaRaw, htmlMeta, pdfMeta } = draft;
+    let slug;
+    if (used.has(draft.desired) && reserved.get(draft.desired) !== draft) {
+      warn(config, `Slug collision for ${file.filename}; using suffix`);
+      slug = uniqueSlug(draft.desired, used);
+    } else {
+      slug = draft.desired;
+      used.add(slug);
+      if (!reserved.has(slug)) reserved.set(slug, draft);
+    }
+    // Only re-resolve against a different folder's meta.yaml when the suffixing
+    // actually landed on an existing page directory; otherwise keep the guess.
+    const extras = (slug !== guessed && (await dirExists(join(config.pagesDir, slug))))
+      ? await loadPageExtras(config, slug)
+      : extrasGuess;
     const yamlMeta = extras.meta && Object.keys(extras.meta).length ? extras.meta : extrasGuess.meta;
     const finalMeta = resolveMeta({
       filename: file.filename,
@@ -140,6 +182,7 @@ export async function emitSite(config, pages) {
     } else if (page.type === "rich-html") {
       htmlOut = injectRichHtml(page.html, page, pages, config);
       if (!htmlOut) {
+        warn(config, `Rich HTML for ${page.filename} had no <html>; wrapping as fragment`);
         htmlOut = fragmentPageHtml(page, pages, config, innerHtml(page.html));
       }
     } else {
@@ -152,20 +195,28 @@ export async function emitSite(config, pages) {
     });
   }
 
+  // Legacy entry points kept alive via meta-refresh redirects so old links keep working.
+  const legacyRedirects = [
+    ["fertilizer.html", "./", "Fertilizer"],
+    ["dashboard.html", `./${LEGACY_DASHBOARD_SLUG}/`, "Dashboard"],
+    [LEGACY_BRIEFING_FILE, `./${LEGACY_BRIEFING_SLUG}/`, "Briefing"]
+  ];
+  const redirectTargets = new Set(legacyRedirects.map(([file]) => file));
+  for (const [file, to, label] of legacyRedirects) {
+    await writeFile(join(config.outDir, file), redirectHtml(to, label));
+  }
   await writeFile(join(config.outDir, "index.html"), catalogHtml(pages, config));
   await writeFile(join(config.outDir, "404.html"), notFoundHtml(pages, config));
-  await writeFile(join(config.outDir, "fertilizer.html"), redirectHtml("./", "Fertilizer"));
-  await writeFile(join(config.outDir, "dashboard.html"), redirectHtml("./dashboard/", "Dashboard"));
-  await writeFile(
-    join(config.outDir, "Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html"),
-    redirectHtml("./briefing/", "Briefing")
-  );
   await writeFile(join(config.outDir, "sitemap.xml"), sitemapXml(pages, config));
   await writeFile(join(config.outDir, "robots.txt"), robotsTxt(config));
 
   const redirects = await scanRedirects(config);
   for (const redir of redirects) {
     if (pages.some((p) => p.slug === redir.from)) continue;
+    if (redirectTargets.has(`${redir.from}.html`)) {
+      warn(config, `Redirect page "${redir.from}" collides with a legacy redirect target; skipping`);
+      continue;
+    }
     const dest = `../${redir.to}/`;
     await mkdir(join(config.outDir, redir.from), { recursive: true });
     await writeFile(join(config.outDir, redir.from, "index.html"), redirectHtml(dest, "Redirecting"));
