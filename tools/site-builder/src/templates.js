@@ -175,7 +175,6 @@ ${seoTags(page, config)}
 <div class="page">
   ${innerContent}
 </div>
-${slimNav(pages, config, page.slug)}
 <script src="/assets/reader.js"></script>
 </body>
 </html>`;
