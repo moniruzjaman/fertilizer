@@ -1,5 +1,3 @@
-// ===== MISSING EXPORTS (were causing build errors) =====
-
 export function seoTags(page, config) {
   const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
   const siteName = config.siteName || 'Fertilizer Management';
@@ -26,15 +24,15 @@ export function seoTags(page, config) {
   `;
 }
 
-export function slimNav(pages, currentSlug, config) {
-  const links = pages
-    .filter(p => p.slug !== currentSlug && !p.noindex)
+export function slimNav(pages, config, currentSlug) {
+  const links = (pages || [])
+    .filter(p => p && p.slug && p.slug !== currentSlug && !p.noindex)
     .slice(0, 6)
     .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${p.title || p.slug}</a>`)
     .join('');
-  
+
   return `
-    <nav style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
+    <nav class="site-slim-nav" style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
       <a href="/" style="color:#006A4E;font-weight:700;text-decoration:none;margin-right:12px;font-size:13px;">← Home</a>
       ${links}
     </nav>
@@ -177,7 +175,7 @@ ${seoTags(page, config)}
 <div class="page">
   ${innerContent}
 </div>
-${slimNav(pages, page.slug, config)}
+${slimNav(pages, config, page.slug)}
 <script src="/assets/reader.js"></script>
 </body>
 </html>`;
