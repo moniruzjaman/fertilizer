@@ -1,3 +1,292 @@
+// ===== MISSING EXPORTS (were causing build errors) =====
+
+export function seoTags(page, config) {
+  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  const siteName = config.siteName || 'Fertilizer Management';
+  const url = `${siteUrl}/${page.slug}/`;
+  const img = `${siteUrl}/${page.slug}/og.png`;
+  const title = page.title || page.slug;
+  const desc = page.description || '';
+  
+  return `
+    <title>${title} — ${siteName}</title>
+    <meta name="description" content="${desc}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${desc}">
+    <meta property="og:url" content="${url}">
+    <meta property="og:image" content="${img}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${desc}">
+    <meta name="twitter:image" content="${img}">
+    ${page.noindex ? '<meta name="robots" content="noindex">' : ''}
+  `;
+}
+
+export function slimNav(pages, currentSlug, config) {
+  const links = pages
+    .filter(p => p.slug !== currentSlug && !p.noindex)
+    .slice(0, 6)
+    .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${p.title || p.slug}</a>`)
+    .join('');
+  
+  return `
+    <nav style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
+      <a href="/" style="color:#006A4E;font-weight:700;text-decoration:none;margin-right:12px;font-size:13px;">← Home</a>
+      ${links}
+    </nav>
+  `;
+}
+
+// ===== SITE CSS =====
+
+export function siteCss() {
+  return `
+    :root {
+      --green: #006A4E;
+      --red: #F42A41;
+      --gold: #C5A028;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --text: #2d3436;
+      --border: #dfe6e9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Georgia, 'Times New Roman', serif;
+      line-height: 1.75;
+      color: var(--text);
+      background: #fff;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 50px;
+      background: #fff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.08);
+    }
+    h1, h2, h3, h4 { line-height: 1.3; }
+    h1 { font-size: 32px; color: var(--green); margin: 30px 0 20px; }
+    h2 { font-size: 24px; color: var(--green); margin: 40px 0 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+    h3 { font-size: 18px; color: var(--dark); margin: 28px 0 12px; border-left: 4px solid var(--red); padding-left: 12px; }
+    p { margin-bottom: 16px; text-align: justify; font-size: 15px; }
+    ul, ol { margin: 14px 0 14px 30px; }
+    li { margin-bottom: 8px; font-size: 15px; }
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+    th { background: var(--green); color: #fff; padding: 12px 14px; text-align: left; font-weight: 600; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); }
+    tr:nth-child(even) td { background: #fafbfc; }
+    a { color: var(--green); }
+    code { background: var(--light); padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+    pre { background: var(--dark); color: #fff; padding: 16px; border-radius: 6px; overflow-x: auto; margin: 16px 0; }
+    pre code { background: none; padding: 0; color: inherit; }
+    blockquote { border-left: 4px solid var(--gold); padding-left: 16px; margin: 20px 0; font-style: italic; color: #555; }
+    @media (max-width: 768px) {
+      .page { padding: 30px 20px; }
+      h1 { font-size: 24px; }
+      h2 { font-size: 20px; }
+    }
+    @media print {
+      .page { box-shadow: none; padding: 20px; }
+      @page { margin: 15mm; }
+    }
+  `;
+}
+
+// ===== READER JS =====
+
+export function readerJs() {
+  return `
+    // Simple reading mode toggle
+    (function() {
+      const btn = document.createElement('button');
+      btn.textContent = '📖 Reading Mode';
+      btn.style.cssText = 'position:fixed;bottom:20px;left:20px;z-index:9999;background:#006A4E;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;box-shadow:0 2px 8px rgba(0,0,0,0.3);';
+      btn.onclick = function() {
+        document.body.classList.toggle('reading-mode');
+        btn.textContent = document.body.classList.contains('reading-mode') ? '✕ Exit Reading' : '📖 Reading Mode';
+      };
+      document.body.appendChild(btn);
+      
+      const style = document.createElement('style');
+      style.textContent = 'body.reading-mode .page{max-width:720px;box-shadow:none;}body.reading-mode p,body.reading-mode li{font-size:1.25em;line-height:1.9;}';
+      document.head.appendChild(style);
+    })();
+  `;
+}
+
+// ===== PDF READER HTML =====
+
+export function pdfReaderHtml(page, pages, config) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+${seoTags(page, config)}
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  .pdf-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+  .pdf-header { margin-bottom: 30px; }
+  .pdf-header h1 { font-size: 28px; color: var(--green); margin-bottom: 10px; }
+  .pdf-meta { font-size: 13px; color: #636e72; }
+  .pdf-frame { width: 100%; height: 800px; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+  .pdf-actions { margin-top: 20px; display: flex; gap: 12px; }
+  .pdf-actions a, .pdf-actions button { 
+    background: var(--green); color: #fff; padding: 10px 20px; 
+    border-radius: 6px; text-decoration: none; border: none; cursor: pointer;
+    font-family: Georgia, serif; font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="pdf-container">
+  <div class="pdf-header">
+    <h1>${page.title || page.slug}</h1>
+    <div class="pdf-meta">
+      ${page.description ? `<p>${page.description}</p>` : ''}
+      ${page.date ? `<p>Published: ${new Date(page.date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}</p>` : ''}
+    </div>
+  </div>
+  <iframe class="pdf-frame" src="/files/${page.slug}.pdf" title="${page.title || page.slug}"></iframe>
+  <div class="pdf-actions">
+    <a href="/files/${page.slug}.pdf" download>⬇ Download PDF</a>
+    <a href="/">← Back to Home</a>
+  </div>
+</div>
+<script src="/assets/reader.js"></script>
+</body>
+</html>`;
+}
+
+// ===== FRAGMENT PAGE HTML =====
+
+export function fragmentPageHtml(page, pages, config, innerContent) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+${seoTags(page, config)}
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div class="page">
+  ${innerContent}
+</div>
+${slimNav(pages, page.slug, config)}
+<script src="/assets/reader.js"></script>
+</body>
+</html>`;
+}
+
+// ===== NOT FOUND HTML =====
+
+export function notFoundHtml(pages, config) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Page Not Found</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<div class="page" style="text-align:center;padding:80px 40px;">
+  <h1 style="font-size:48px;color:var(--red);">404</h1>
+  <h2 style="border:none;text-align:center;">Page Not Found</h2>
+  <p style="text-align:center;font-size:16px;">The page you're looking for doesn't exist or has been moved.</p>
+  <p style="text-align:center;margin-top:30px;"><a href="/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
+</div>
+</body>
+</html>`;
+}
+
+// ===== REDIRECT HTML =====
+
+export function redirectHtml(to, label) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting to ${label}...</title>
+<meta http-equiv="refresh" content="0; url=${to}">
+<link rel="canonical" href="${to}">
+<style>
+  body { font-family: Georgia, serif; text-align: center; padding: 60px 20px; background: #f8f9fa; }
+  .msg { max-width: 500px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  h1 { color: #006A4E; margin-bottom: 16px; }
+  p { color: #636e72; margin-bottom: 24px; }
+  a { color: #006A4E; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="msg">
+  <h1>Redirecting...</h1>
+  <p>Taking you to <strong>${label}</strong>.</p>
+  <p><a href="${to}">Click here if not redirected automatically</a></p>
+</div>
+</body>
+</html>`;
+}
+
+// ===== ROBOTS TXT =====
+
+export function robotsTxt(config) {
+  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  return `User-agent: *
+Allow: /
+Sitemap: ${siteUrl}/sitemap.xml
+`;
+}
+
+// ===== SITEMAP XML =====
+
+export function sitemapXml(pages, config) {
+  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  const urls = pages
+    .filter(p => !p.noindex)
+    .map(p => {
+      const lastmod = p.date ? new Date(p.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      return `  <url>
+    <loc>${siteUrl}/${p.slug}/</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>${p.slug === 'briefing' ? '1.0' : '0.8'}</priority>
+  </url>`;
+    })
+    .join('\n');
+  
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${siteUrl}/</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+${urls}
+</urlset>`;
+}
+
+// ===== INNER HTML EXTRACTOR =====
+
+export function innerHtml(html) {
+  // Extract content between <body> tags, or return full html if no body tag
+  const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+  if (bodyMatch) {
+    return bodyMatch[1].trim();
+  }
+  return html;
+}
+
+// ===== CATALOG HTML (NEW DRAWER VERSION) =====
+
 export function catalogHtml(pages, config) {
   const sorted = [...pages].sort((a, b) => {
     if (a.date && b.date) return b.date.localeCompare(a.date);
@@ -69,7 +358,6 @@ export function catalogHtml(pages, config) {
     overflow-x: hidden;
   }
 
-  /* ===== DRAWER SIDEBAR (Desktop) ===== */
   .drawer {
     position: fixed;
     top: 0; left: 0;
@@ -275,7 +563,6 @@ export function catalogHtml(pages, config) {
     text-align: center;
   }
 
-  /* ===== MAIN CONTENT ===== */
   .main {
     margin-left: var(--drawer-width);
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -447,7 +734,6 @@ export function catalogHtml(pages, config) {
     gap: 6px;
   }
 
-  /* Mobile drawer (bottom sheet) */
   .mobile-fab {
     display: none;
     position: fixed;
@@ -476,7 +762,6 @@ export function catalogHtml(pages, config) {
   }
   .mobile-overlay.active { opacity: 1; }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .drawer {
       position: fixed;
@@ -509,14 +794,12 @@ export function catalogHtml(pages, config) {
     .content { padding: 30px 24px; }
   }
 
-  /* Hidden state for filtered cards */
   .drawer-card.hidden { display: none; }
   .drawer-section.hidden { display: none; }
 </style>
 </head>
 <body>
 
-<!-- DRAWER SIDEBAR -->
 <aside class="drawer" id="drawer">
   <div class="drawer-header">
     <div class="drawer-brand">
@@ -568,13 +851,11 @@ export function catalogHtml(pages, config) {
   </div>
 </aside>
 
-<!-- MOBILE FAB + OVERLAY -->
 <button class="mobile-fab" id="mobileFab" aria-label="Open navigation">
   <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
 </button>
 <div class="mobile-overlay" id="mobileOverlay"></div>
 
-<!-- MAIN CONTENT -->
 <main class="main">
   <section class="hero">
     <div class="hero-inner">
@@ -660,7 +941,6 @@ export function catalogHtml(pages, config) {
 </main>
 
 <script>
-  // Desktop drawer toggle
   const drawer = document.getElementById('drawer');
   const toggle = document.getElementById('drawerToggle');
   toggle.addEventListener('click', () => {
@@ -671,7 +951,6 @@ export function catalogHtml(pages, config) {
     drawer.classList.add('collapsed');
   }
 
-  // Mobile drawer
   const fab = document.getElementById('mobileFab');
   const overlay = document.getElementById('mobileOverlay');
   fab.addEventListener('click', () => {
@@ -685,7 +964,6 @@ export function catalogHtml(pages, config) {
     setTimeout(() => overlay.style.display = 'none', 300);
   });
 
-  // Search
   const searchInput = document.getElementById('searchInput');
   searchInput.addEventListener('input', (e) => {
     const q = e.target.value.toLowerCase();
@@ -693,14 +971,12 @@ export function catalogHtml(pages, config) {
       const text = card.textContent.toLowerCase();
       card.classList.toggle('hidden', q && !text.includes(q));
     });
-    // Hide empty sections
     document.querySelectorAll('.drawer-section').forEach(sec => {
       const visibleCards = sec.querySelectorAll('.drawer-card:not(.hidden)');
       sec.classList.toggle('hidden', visibleCards.length === 0);
     });
   });
 
-  // Filters
   document.querySelectorAll('.drawer-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.drawer-filter-btn').forEach(b => b.classList.remove('active'));
@@ -718,7 +994,6 @@ export function catalogHtml(pages, config) {
     });
   });
 
-  // Close drawer on link click (mobile)
   document.querySelectorAll('.drawer-card').forEach(card => {
     card.addEventListener('click', () => {
       if (window.innerWidth <= 900) {
