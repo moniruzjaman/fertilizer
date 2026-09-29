@@ -71,6 +71,7 @@ export async function collectPages(config) {
   for (const file of files) {
     const guessed = slugify(stem(file.filename));
     const extrasGuess = await loadPageExtras(config, guessed);
+    const hasFolder = await dirExists(join(config.pagesDir, guessed));
     let html = "";
     let pdfMetaRaw = {};
     if (file.ext === ".html" || file.ext === ".htm") {
@@ -100,7 +101,7 @@ export async function collectPages(config) {
       pdfMeta
     });
     drafts.push({
-      file, guessed, extrasGuess, html, pdfMetaRaw, htmlMeta, pdfMeta,
+      file, guessed, hasFolder, extrasGuess, html, pdfMetaRaw, htmlMeta, pdfMeta,
       slugOverride: resolved.slugOverride,
       desired: slugify(resolved.slugOverride || guessed)
     });
@@ -108,14 +109,18 @@ export async function collectPages(config) {
 
   // Pass 2: reserve explicit meta.yaml slugs first so an authored override
   // always wins over a filename-derived slug on collision — regardless of
-  // which draft declared it or how the files sort alphabetically.
+  // which draft declared it or how the files sort alphabetically. When two
+  // drafts claim the same target, the one whose folder already exists wins.
   const reserved = new Map(); // desired slug -> draft that owns it
   const used = new Set();
   for (const draft of drafts) {
     if (!draft.slugOverride) continue;
-    if (!reserved.has(draft.desired)) {
+    const current = reserved.get(draft.desired);
+    if (!current) {
       reserved.set(draft.desired, draft);
       used.add(draft.desired);
+    } else if (!current.hasFolder && draft.hasFolder) {
+      reserved.set(draft.desired, draft);
     }
   }
 
