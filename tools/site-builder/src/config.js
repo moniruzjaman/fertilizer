@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 export const DEFAULT_SITE_BASE = "https://moniruzjaman.github.io/fertilizer";
+export const DEFAULT_SITE_NAME = "Fertilizer Management";
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
@@ -18,7 +19,8 @@ export function getConfig(options = {}) {
   const root = resolve(options.root || defaultRoot());
   return {
     root,
-    siteBase: String(options.siteBase || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, ""),
+    siteBase: String(options.siteBase || options.siteUrl || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, ""),
+    siteName: options.siteName || DEFAULT_SITE_NAME,
     inboxDir: options.inboxDir || join(root, "content", "inbox"),
     pagesDir: options.pagesDir || join(root, "content", "pages"),
     outDir: options.outDir || join(root, "site"),

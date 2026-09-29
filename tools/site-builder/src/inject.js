@@ -25,3 +25,9 @@ export function injectRichHtml(html, page, pages, config) {
   }
   return $.html();
 }
+
+/**
+ * Backwards-compatible alias for injectRichHtml. Prefer `injectRichHtml`.
+ * @deprecated
+ */
+export const inject = injectRichHtml;
