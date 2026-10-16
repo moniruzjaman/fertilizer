@@ -18,6 +18,8 @@ export function injectRichHtml(html, page, pages, config) {
   $("link[rel='canonical'], meta[property^='og:'], meta[name^='twitter:'], meta[name='description'], meta[name='robots'], script[type='application/ld+json']").remove();
   $("head").append(seoTags(page, config));
   if (!$("body").length) $("html").append("<body></body>");
+  // Page list lives only in the "drawer & pages" slide-in (see slimNav);
+  // drop any stale inline nav strips that came from the source document.
   $(".site-slim-nav, #slimnav-root").remove();
   $("body").prepend(slimNav(pages, config, page.slug));
   // Footer-style toolbelt available on every page: PDF (Print), DOCX, Print.

@@ -7,7 +7,8 @@ export function seoTags(page, config) {
   const desc = page.description || '';
   
   return `
-    <title>${title} — ${siteName}</title>
+    <title>${title}</title>
+    <link rel="canonical" href="${url}">
     <meta name="description" content="${desc}">
     <meta property="og:type" content="article">
     <meta property="og:title" content="${title}">
@@ -29,23 +30,17 @@ export function slimNav(pages, config, currentSlug) {
     .filter(p => p && p.slug && !p.noindex)
     .slice(0, 7);
 
-  // Desktop: the classic slim inline nav strip.
-  const links = items
-    .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${p.title || p.slug}</a>`)
-    .join('');
-
-  // Mobile: the same page list lives inside a slide-in drawer opened/closed
-  // with the "☰ drawer & pages" button so it never covers half the screen.
+  // The page list lives entirely inside a slide-in drawer opened/closed with
+  // the "☰ drawer & pages" button, so on mobile it never covers half the
+  // screen and reading stays clutter-free. Links are relative to the site
+  // root ("/slug/") because GitHub Pages serves this repo from /fertilizer/
+  // and every generated page is wrapped at build time.
   const drawerLinks = items
     .map(p => `<a href="/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
     .join('\n        ');
 
   return `
     <div id="slimnav-root">
-      <nav class="site-slim-nav" style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
-        <a href="/" style="color:#006A4E;font-weight:700;text-decoration:none;margin-right:12px;font-size:13px;">← Home</a>
-        ${links}
-      </nav>
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       <div id="sn-overlay"></div>
       <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
@@ -84,48 +79,43 @@ export function pageToolsHtml(page) {
 
 export function chromeCss() {
   return `
-/* === Slim nav: mobile drawer ("drawer & pages") === */
+/* === Slim nav: page list lives in a slide-in drawer ("drawer & pages") === */
 #slimnav-root{position:relative;}
-#sn-open{display:none;}
-#sn-overlay{display:none;}
-@media (max-width:768px){
-  .site-slim-nav{display:none;}
-  #sn-open{
-    position:fixed;left:14px;top:14px;z-index:10002;
-    background:#006A4E;color:#fff;border:none;padding:9px 13px;border-radius:8px;
-    font-size:13px;font-family:Georgia,serif;cursor:pointer;
-    box-shadow:0 2px 8px rgba(0,0,0,.3);
-  }
-  #sn-overlay{
-    display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);
-    z-index:10003;opacity:0;pointer-events:none;transition:opacity .25s ease;
-  }
-  #sn-overlay.open{opacity:1;pointer-events:auto;}
-  #sn-drawer{
-    position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);z-index:10004;
-    background:#fff;box-shadow:2px 0 16px rgba(0,0,0,.25);
-    transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1);
-    display:flex;flex-direction:column;overflow:hidden;
-  }
-  #sn-drawer.open{transform:translateX(0);}
-  #sn-drawer-head{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:14px 16px;background:#006A4E;color:#fff;font-family:Georgia,serif;
-  }
-  #sn-drawer-title{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-  #sn-close{
-    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;
-    padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;
-  }
-  #sn-drawer-body{overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;}
-  #sn-drawer-body a{
-    display:block;padding:12px 18px;margin:0;color:#006A4E;text-decoration:none;
-    font-size:14px;font-family:Georgia,serif;border-bottom:1px solid #eef2f0;
-  }
-  #sn-drawer-body a:first-child{font-weight:700;}
-  #sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
-  #sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
+#sn-open{
+  position:fixed;left:14px;top:14px;z-index:10002;
+  background:#006A4E;color:#fff;border:none;padding:9px 13px;border-radius:8px;
+  font-size:13px;font-family:Georgia,serif;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
 }
+#sn-overlay{
+  display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:10003;opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+#sn-overlay.open{opacity:1;pointer-events:auto;}
+#sn-drawer{
+  position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);z-index:10004;
+  background:#fff;box-shadow:2px 0 16px rgba(0,0,0,.25);
+  transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#sn-drawer.open{transform:translateX(0);}
+#sn-drawer-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px;background:#006A4E;color:#fff;font-family:Georgia,serif;
+}
+#sn-drawer-title{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+#sn-close{
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;
+  padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;
+}
+#sn-drawer-body{overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;}
+#sn-drawer-body a{
+  display:block;padding:12px 18px;margin:0;color:#006A4E;text-decoration:none;
+  font-size:14px;font-family:Georgia,serif;border-bottom:1px solid #eef2f0;
+}
+#sn-drawer-body a:first-child{font-weight:700;}
+#sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
+#sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
 /* === Page tools: PDF (Print) / DOCX / Print on every page === */
 #page-tools{
   position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
@@ -374,9 +364,10 @@ ${seoTags(page, config)}
 <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
-${slimNav(pages, config, page.slug)}
 <div class="page">
+  <article class="prose">
   ${innerContent}
+  </article>
 </div>
 ${slimNav(pages, config, page.slug)}
 ${pageToolsHtml(page)}
@@ -511,8 +502,8 @@ export function catalogHtml(pages, config) {
   };
 
   const pageCard = (p) => `
-    <a href="/${p.slug}/" class="drawer-card" data-type="${p.type}" data-slug="${p.slug}">
-      <div class="drawer-card-thumb" style="background-image:url('/${p.slug}/og.png')"></div>
+    <a href="${p.slug}/" class="drawer-card" data-type="${p.type}" data-slug="${p.slug}">
+      <div class="drawer-card-thumb" style="background-image:url('${p.slug}/og.png')"></div>
       <div class="drawer-card-body">
         <div class="drawer-card-meta">
           <span class="drawer-card-type">${p.type === 'pdf' ? '📄 PDF' : p.type === 'rich-html' ? '📝 Report' : '📑 Page'}</span>
@@ -532,6 +523,7 @@ export function catalogHtml(pages, config) {
 <title>Fertilizer Management — Burden to Bloom</title>
 <meta name="description" content="Ministry of Agriculture strategic briefings, dashboards, and reform documents for Bangladesh's fertilizer distribution system.">
 <meta name="theme-color" content="#006A4E">
+<link rel="canonical" href="${(config.siteUrl || 'https://moniruzjaman.github.io/fertilizer')}/">
 <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
 <link rel="icon" type="image/svg+xml" href="/logo.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -1094,8 +1086,8 @@ export function catalogHtml(pages, config) {
 
     <div class="featured-grid">
       ${grouped.briefing.slice(0, 3).map(p => `
-        <a href="/${p.slug}/" class="featured-card">
-          <div class="featured-card-img" style="background-image:url('/${p.slug}/og.png')"></div>
+        <a href="${p.slug}/" class="featured-card">
+          <div class="featured-card-img" style="background-image:url('${p.slug}/og.png')"></div>
           <div class="featured-card-body">
             <span class="featured-card-tag briefing">Briefing</span>
             <h3>${p.title || p.slug}</h3>
@@ -1105,8 +1097,8 @@ export function catalogHtml(pages, config) {
         </a>
       `).join('')}
       ${grouped.dashboard.slice(0, 1).map(p => `
-        <a href="/${p.slug}/" class="featured-card">
-          <div class="featured-card-img" style="background-image:url('/${p.slug}/og.png')"></div>
+        <a href="${p.slug}/" class="featured-card">
+          <div class="featured-card-img" style="background-image:url('${p.slug}/og.png')"></div>
           <div class="featured-card-body">
             <span class="featured-card-tag dashboard">Dashboard</span>
             <h3>${p.title || p.slug}</h3>
