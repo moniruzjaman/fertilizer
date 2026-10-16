@@ -18,6 +18,19 @@ export function injectRichHtml(html, page, pages, config) {
   $("link[rel='canonical'], meta[property^='og:'], meta[name^='twitter:'], meta[name='description'], meta[name='robots'], script[type='application/ld+json']").remove();
   $("head").append(seoTags(page, config));
   if (!$("body").length) $("html").append("<body></body>");
+  // Fix in-content root-relative links (href="/slug/") written by source
+  // authors: on GitHub Pages under /fertilizer/ they escape the project and
+  // 404. Rewrite them to page-root-relative paths ("../slug/", home becomes
+  // "../") which resolve correctly under any deployment base from every page
+  // depth. Only known page slugs are rewritten so shared assets
+  // (/assets/, /files/) keep working via reader.js's runtime prefixing.
+  const slugs = new Set((pages || []).map(p => p && p.slug).filter(Boolean));
+  $("a[href^='/']").each((_, el) => {
+    const href = $(el).attr("href") || "";
+    const m = href.match(/^\/([a-z0-9][a-z0-9-]*)\/?$/);
+    if (m && slugs.has(m[1])) $(el).attr("href", `../${m[1]}/`);
+    else if (href === "/" || href === "") $(el).attr("href", "../");
+  });
   // Page list lives only in the "drawer & pages" slide-in (see slimNav);
   // drop any stale inline nav strips that came from the source document.
   $(".site-slim-nav:not(#slimnav-root), #slimnav-root").remove();
