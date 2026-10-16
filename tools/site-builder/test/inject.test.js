@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { injectRichHtml, innerHtml } from '../src/inject.js';
-import { fragmentPageHtml } from '../src/templates.js';
+import { catalogHtml, fragmentPageHtml, notFoundHtml, pdfReaderHtml, slimNav } from '../src/templates.js';
 
 describe('inject', () => {
   it('returns innerHtml when no body', () => {
@@ -34,8 +34,37 @@ describe('inject', () => {
     const result = injectRichHtml(html, page, pages, config);
     
     assert.ok(result.includes('site-slim-nav'));
-    assert.ok(result.includes('href="/"'));
-    assert.ok(result.includes('href="/other/"'));
+    assert.ok(result.includes('href="https://example.com/"'));
+    assert.ok(result.includes('href="https://example.com/other/"'));
+    // Drawer + toolbelt are injected exactly once per page (no stacking).
+    assert.equal(result.split('id="slimnav-root"').length - 1, 1, 'exactly one drawer');
+    assert.equal(result.split('id="page-tools"').length - 1, 1, 'exactly one toolbelt');
+    // Tool icons live in the TOP header (not the footer).
+    assert.match(result, /#page-tools\{[^}]*position:fixed;top:14px;right:14px/);
+  });
+
+  it('renders the same synced drawer on every page type', () => {
+    const pages = [{ slug: 'alpha', title: 'Alpha' }, { slug: 'beta', title: 'Beta' }];
+    const config = { siteUrl: 'https://moniruzjaman.github.io/fertilizer' };
+
+    const nav = slimNav(pages, config, 'alpha');
+    // Links are identical across pages (synced) and honor the site base path.
+    assert.ok(nav.includes('href="https://moniruzjaman.github.io/fertilizer/alpha/"'));
+    assert.ok(nav.includes('href="https://moniruzjaman.github.io/fertilizer/beta/"'));
+    assert.ok(nav.includes('>← Home</a>'), 'home link present');
+    assert.ok(nav.includes('aria-current="page"'), 'marks current page');
+
+    const reader = pdfReaderHtml({ slug: 'alpha', title: 'Alpha' }, pages, config);
+    const nf = notFoundHtml(pages, config);
+    const home = catalogHtml(pages, config);
+    for (const [name, html] of [['reader', reader], ['404', nf], ['home', home]]) {
+      assert.ok(html.includes('id="sn-open"'), name + ' must carry the drawer button');
+      assert.ok(html.includes('id="sn-drawer"'), name + ' must carry the drawer');
+      assert.ok(html.includes('id="page-tools"'), name + ' must carry the tool icons');
+      assert.ok(html.includes('/fertilizer/beta/'), name + ' drawer must list the same pages');
+    }
+    // Home hides its legacy bottom FAB so chrome matches other pages.
+    assert.match(home, /\.mobile-fab \{ display: none !important; \}/);
   });
 });
 

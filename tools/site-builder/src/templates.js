@@ -27,27 +27,31 @@ export function seoTags(page, config) {
   `;
 }
 
+// Single source of truth for the navigation drawer used by EVERY page:
+// inner document pages (via injectRichHtml), the PDF reader wrapper, the
+// home/catalog page, and the 404 page all call slimNav(), so the drawer and
+// its links can never drift out of sync between pages again.
 export function slimNav(pages, config, currentSlug) {
-  const items = (pages || [])
-    .filter(p => p && p.slug && !p.noindex)
-    .slice(0, 7);
+  const items = (pages || []).filter(p => p && p.slug && !p.noindex);
 
-  // The page list lives entirely inside a slide-in drawer opened/closed with
-  // the "☰ drawer & pages" button, so on mobile it never covers half the
-  // screen and reading stays clutter-free. Links are relative to the site
-  // root ("/slug/") because GitHub Pages serves this repo from /fertilizer/
-  // and every generated page is wrapped at build time.
+  // Site-root-relative hrefs ("/fertilizer/slug/") derived from config.siteUrl
+  // so the same markup works whether a page sits at the site root (home) or
+  // one level down (/<slug>/). Previously hardcoded "/" + "/slug/" hrefs
+  // resolved against github.io's root under the project-page base path,
+  // producing broken links and an out-of-sync drawer on some pages.
+  const base = (config && config.siteUrl) || '';
+  const hrefFor = (p) => `${base}/${p.slug}/`;
+  const homeHref = `${base}/`;
+
   const drawerLinks = items
-    .map(p => `<a href="/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
+    .map(p => `<a href="${hrefFor(p)}"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
     .join('\n        ');
-  const homeHref = '/';
 
-  // The drawer root carries id="slimnav-root" (no site-slim-nav class), so
-  // inject.js's stale inline-strip selector ".site-slim-nav" never removes a
-  // freshly injected drawer, and fragment pages (which skip slimNav entirely)
-  // provably contain no navigation markup.
+  // The drawer root carries id="slimnav-root", so inject.js's stale
+  // inline-strip selectors remove any previously injected chrome before a
+  // fresh copy is prepended — repeated builds/injections never stack drawers.
   return `
-    <div id="slimnav-root">
+    <div id="slimnav-root" class="site-slim-nav">
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       <div id="sn-overlay"></div>
       <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
@@ -64,7 +68,7 @@ ${drawerLinks}
   `;
 }
 
-// ===== PAGE TOOLS HTML (PDF / DOCX / PRINT — on every page footer area) =====
+// ===== PAGE TOOLS HTML (PDF / DOCX / PRINT — top header bar, every page) =====
 
 const ptIcon = {
   print: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
@@ -123,10 +127,12 @@ export function chromeCss() {
 #sn-drawer-body a:first-child{font-weight:700;}
 #sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
 #sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
-/* === Page tools: PDF (Print) / DOCX / Print on every page === */
+/* === Page tools: PDF (Print) / DOCX / Print in the TOP HEADER of every page.
+   Anchored top-right so it sits opposite the "drawer & pages" button which is
+   anchored top-left — both form a consistent floating header chrome. === */
 #page-tools{
-  position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
-  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);
+  position:fixed;top:14px;right:14px;z-index:10001;display:flex;gap:8px;
+  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 200px);
   font-family:Georgia,serif;
 }
 #page-tools .pt-btn{
@@ -401,8 +407,9 @@ export function notFoundHtml(pages, config) {
   <h1 style="font-size:48px;color:var(--red);">404</h1>
   <h2 style="border:none;text-align:center;">Page Not Found</h2>
   <p style="text-align:center;font-size:16px;">The page you're looking for doesn't exist or has been moved.</p>
-  <p style="text-align:center;margin-top:30px;"><a href="/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
+  <p style="text-align:center;margin-top:30px;"><a href="${(config && config.siteUrl) || ''}/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
 </div>
+${slimNav(pages, config, '')}
 ${pageToolsHtml({ slug: '404' })}
 <style>${chromeCss()}</style>
 <script>${pageToolsJs()}</script>
@@ -546,7 +553,13 @@ export function catalogHtml(pages, config) {
 <meta property="og:image" content="${config.siteUrl || 'https://moniruzjaman.github.io/fertilizer'}/social-preview.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+${slimNav(pages, config, '')}
 <style>
+  /* Home page now uses the SAME fixed top-left "drawer & pages" button as
+     every other page (see slimNav above), so hide the bespoke bottom-right
+     FAB that used to live in the footer area — it is redundant and was the
+     source of the drawer/icons being out of sync between home and pages. */
+  .mobile-fab { display: none !important; }
   :root {
     --green: #006A4E;
     --red: #F42A41;
@@ -1163,11 +1176,20 @@ ${pageToolsHtml({ slug: 'fertilizer-briefing' })}
 
   const fab = document.getElementById('mobileFab');
   const overlay = document.getElementById('mobileOverlay');
-  fab.addEventListener('click', () => {
+  // The home page now shares the fixed top-left "drawer & pages" header
+  // button (slimNav) with every other page; the legacy bottom FAB is hidden
+  // via CSS. Wire BOTH openers to the same slide-up drawer so nothing breaks
+  // if the FAB ever reappears, and let slimNav's own script drive #sn-open.
+  function openMobileDrawer() {
     drawer.classList.add('mobile-open');
     overlay.classList.add('active');
     overlay.style.display = 'block';
-  });
+  }
+  if (fab) fab.addEventListener('click', openMobileDrawer);
+  var snOpenBtn = document.getElementById('sn-open');
+  if (snOpenBtn && window.innerWidth <= 900) {
+    snOpenBtn.addEventListener('click', openMobileDrawer);
+  }
   overlay.addEventListener('click', () => {
     drawer.classList.remove('mobile-open');
     overlay.classList.remove('active');
