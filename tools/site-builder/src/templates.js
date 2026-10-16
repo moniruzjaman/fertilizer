@@ -48,6 +48,17 @@ export function slimNav(pages, config, currentSlug) {
     .join('\n        ');
   const homeHref = `${base}/`;
 
+
+  // The page list lives entirely inside a slide-in drawer opened/closed with
+  // the "☰ drawer & pages" button, so on mobile it never covers half the
+  // screen and reading stays clutter-free. Links are relative to the site
+  // root ("/slug/") because GitHub Pages serves this repo from /fertilizer/
+  // and every generated page is wrapped at build time.
+  const drawerLinks = items
+    .map(p => `<a href="/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
+    .join('\n        ');
+  const homeHref = '/';
+
   // The drawer root carries id="slimnav-root" (no site-slim-nav class), so
   // inject.js's stale inline-strip selector ".site-slim-nav" never removes a
   // freshly injected drawer, and fragment pages (which skip slimNav entirely)
@@ -59,6 +70,9 @@ export function slimNav(pages, config, currentSlug) {
     <div id="slimnav-root">
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       ${topBarToolsHtml(currentSlug)}
+  return `
+    <div id="slimnav-root">
+      <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       <div id="sn-overlay"></div>
       <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
         <div id="sn-drawer-head">
@@ -75,6 +89,7 @@ ${drawerLinks}
 }
 
 // ===== PAGE TOOLS ICONS + FOOTER TOOLBELT =====
+// ===== PAGE TOOLS HTML (PDF / DOCX / PRINT — on every page footer area) =====
 
 const ptIcon = {
   print: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
@@ -106,6 +121,16 @@ ${ptButtonsHtml(currentSlug || 'document')}
 // call-sites keep working, but it renders nothing to avoid duplicate icons.
 export function pageToolsHtml(page) {
   return '';
+}
+
+export function pageToolsHtml(page) {
+  const slug = (page && page.slug) || 'document';
+  return `
+<div id="page-tools" aria-label="Document tools">
+  <button type="button" class="pt-btn" data-pt-action="pdf" title="Download PDF — opens the print dialog, choose \\"Save as PDF\\"">${ptIcon.pdf}<span class="pt-label">PDF (Print)</span></button>
+  <button type="button" class="pt-btn" data-pt-action="docx" data-pt-slug="${slug}" title="Download this document as DOCX">${ptIcon.docx}<span class="pt-label">DOCX</span></button>
+  <button type="button" class="pt-btn" data-pt-action="print" title="Print this page">${ptIcon.print}<span class="pt-label">Print</span></button>
+</div>`;
 }
 
 // ===== SLIM NAV + PAGE TOOLS CSS (injected into site.css and rich pages) =====
@@ -171,6 +196,24 @@ export function chromeCss() {
 }
 @media print{
   #page-tools,#sn-topbar-tools,#slimnav-root,#sn-drawer,#sn-overlay,#sn-open,.site-slim-nav{display:none !important;}
+/* === Page tools: PDF (Print) / DOCX / Print on every page === */
+#page-tools{
+  position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
+  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);
+  font-family:Georgia,serif;
+}
+#page-tools .pt-btn{
+  display:inline-flex;align-items:center;gap:6px;background:#006A4E;color:#fff;
+  border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease,background .15s ease;
+}
+#page-tools .pt-btn:hover{transform:translateY(-2px);background:#00573f;}
+@media (max-width:640px){
+  #page-tools .pt-label{display:none;}
+  #page-tools .pt-btn{padding:10px;}
+}
+@media print{
+  #page-tools,#slimnav-root,#sn-drawer,#sn-overlay,#sn-open,.site-slim-nav{display:none !important;}
 }
 `;
 }
@@ -204,12 +247,28 @@ export function pageToolsJs() {
             }
           });
         }
+      var root = document.getElementById('page-tools');
+      if (!root || root.dataset.ptReady === '1') return;
+      root.dataset.ptReady = '1';
+      var buttons = root.querySelectorAll('[data-pt-action]');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var action = this.getAttribute('data-pt-action');
+          if (action === 'print' || action === 'pdf') {
+            window.print();
+          } else if (action === 'docx') {
+            window.downloadDocx(this.getAttribute('data-pt-slug') || 'document');
+          }
+        });
       }
     };
     window.downloadDocx = function (fallbackName) {
       var head = '<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
       var b = document.body.cloneNode(true);
       var junk = ['#page-tools', '#sn-topbar-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
+      var junk = ['#page-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
       for (var j = 0; j < junk.length; j++) {
         try {
           var els = b.querySelectorAll(junk[j]);
@@ -417,6 +476,7 @@ ${seoTags(page, config)}
 ${slimNav(pages, config, page.slug)}
 ${pageToolsHtml(page)}
 <style>${chromeCss()}</style>
+${pageToolsHtml(page)}
 <script src="/assets/reader.js"></script>
 <script>${pageToolsJs()}</script>
 </body>
