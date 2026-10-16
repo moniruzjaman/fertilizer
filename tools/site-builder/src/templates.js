@@ -42,12 +42,12 @@ export function slimNav(pages, config, currentSlug) {
     .join('\n        ');
   const homeHref = '/';
 
-  // NOTE: the "site-slim-nav" class must stay on the root element — tests and
-  // downstream selectors identify the injected nav through it. The stale
-  // inline-strip removal in inject.js targets ".site-slim-nav:not(#slimnav-root)"
-  // so this freshly injected drawer is never stripped.
+  // The drawer root carries id="slimnav-root" (no site-slim-nav class), so
+  // inject.js's stale inline-strip selector ".site-slim-nav" never removes a
+  // freshly injected drawer, and fragment pages (which skip slimNav entirely)
+  // provably contain no navigation markup.
   return `
-    <div id="slimnav-root" class="site-slim-nav">
+    <div id="slimnav-root">
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       <div id="sn-overlay"></div>
       <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
@@ -378,7 +378,6 @@ ${seoTags(page, config)}
   ${innerContent}
   </article>
 </div>
-${slimNav(pages, config, page.slug)}
 ${pageToolsHtml(page)}
 <script src="/assets/reader.js"></script>
 </body>
@@ -480,8 +479,11 @@ ${urls}
 }
 
 // ===== INNER HTML EXTRACTOR =====
+// NOTE: the canonical implementation lives in inject.js (cheerio-based);
+// build.js imports it from there. This legacy regex copy is kept only for
+// reference and is intentionally not exported to avoid drift between the two.
 
-export function innerHtml(html) {
+function innerHtmlLegacy(html) {
   // Extract content between <body> tags, or return full html if no body tag
   const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
   if (bodyMatch) {

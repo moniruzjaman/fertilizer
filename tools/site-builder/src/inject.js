@@ -20,7 +20,7 @@ export function injectRichHtml(html, page, pages, config) {
   if (!$("body").length) $("html").append("<body></body>");
   // Page list lives only in the "drawer & pages" slide-in (see slimNav);
   // drop any stale inline nav strips that came from the source document.
-  $(".site-slim-nav, #slimnav-root").remove();
+  $(".site-slim-nav:not(#slimnav-root), #slimnav-root").remove();
   $("body").prepend(slimNav(pages, config, page.slug));
   // Footer-style toolbelt available on every page: PDF (Print), DOCX, Print.
   $("#page-tools").remove();
