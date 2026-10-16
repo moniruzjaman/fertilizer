@@ -25,18 +25,216 @@ export function seoTags(page, config) {
 }
 
 export function slimNav(pages, config, currentSlug) {
-  const links = (pages || [])
-    .filter(p => p && p.slug && p.slug !== currentSlug && !p.noindex)
-    .slice(0, 6)
+  const items = (pages || [])
+    .filter(p => p && p.slug && !p.noindex)
+    .slice(0, 7);
+
+  // Desktop: the classic slim inline nav strip.
+  const links = items
     .map(p => `<a href="/${p.slug}/" style="color:#006A4E;text-decoration:none;margin:0 8px;font-size:13px;">${p.title || p.slug}</a>`)
     .join('');
 
+  // Mobile: the same page list lives inside a slide-in drawer opened/closed
+  // with the "☰ drawer & pages" button so it never covers half the screen.
+  const drawerLinks = items
+    .map(p => `<a href="/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
+    .join('\n        ');
+
   return `
-    <nav class="site-slim-nav" style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
-      <a href="/" style="color:#006A4E;font-weight:700;text-decoration:none;margin-right:12px;font-size:13px;">← Home</a>
-      ${links}
-    </nav>
+    <div id="slimnav-root">
+      <nav class="site-slim-nav" style="padding:20px 30px;text-align:center;border-top:1px solid #dfe6e9;background:#f8f9fa;font-family:Georgia,serif;">
+        <a href="/" style="color:#006A4E;font-weight:700;text-decoration:none;margin-right:12px;font-size:13px;">← Home</a>
+        ${links}
+      </nav>
+      <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
+      <div id="sn-overlay"></div>
+      <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
+        <div id="sn-drawer-head">
+          <span id="sn-drawer-title">Pages</span>
+          <button id="sn-close" aria-label="Close page navigation">✕ Close</button>
+        </div>
+        <div id="sn-drawer-body">
+          <a href="/">← Home</a>
+${drawerLinks}
+        </div>
+      </aside>
+    </div>
   `;
+}
+
+// ===== PAGE TOOLS HTML (PDF / DOCX / PRINT — on every page footer area) =====
+
+const ptIcon = {
+  print: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  pdf: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>',
+  docx: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10.5 12.5 12 17l1.5-4.5L15 17"/><path d="M10 9h.01"/></svg>'
+};
+
+export function pageToolsHtml(page) {
+  const slug = (page && page.slug) || 'document';
+  return `
+<div id="page-tools" aria-label="Document tools">
+  <button type="button" class="pt-btn" data-pt-action="pdf" title="Download PDF — opens the print dialog, choose \\"Save as PDF\\"">${ptIcon.pdf}<span class="pt-label">PDF (Print)</span></button>
+  <button type="button" class="pt-btn" data-pt-action="docx" data-pt-slug="${slug}" title="Download this document as DOCX">${ptIcon.docx}<span class="pt-label">DOCX</span></button>
+  <button type="button" class="pt-btn" data-pt-action="print" title="Print this page">${ptIcon.print}<span class="pt-label">Print</span></button>
+</div>`;
+}
+
+// ===== SLIM NAV + PAGE TOOLS CSS (injected into site.css and rich pages) =====
+
+export function chromeCss() {
+  return `
+/* === Slim nav: mobile drawer ("drawer & pages") === */
+#slimnav-root{position:relative;}
+#sn-open{display:none;}
+#sn-overlay{display:none;}
+@media (max-width:768px){
+  .site-slim-nav{display:none;}
+  #sn-open{
+    position:fixed;left:14px;top:14px;z-index:10002;
+    background:#006A4E;color:#fff;border:none;padding:9px 13px;border-radius:8px;
+    font-size:13px;font-family:Georgia,serif;cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  #sn-overlay{
+    display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);
+    z-index:10003;opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  #sn-overlay.open{opacity:1;pointer-events:auto;}
+  #sn-drawer{
+    position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);z-index:10004;
+    background:#fff;box-shadow:2px 0 16px rgba(0,0,0,.25);
+    transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  #sn-drawer.open{transform:translateX(0);}
+  #sn-drawer-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px 16px;background:#006A4E;color:#fff;font-family:Georgia,serif;
+  }
+  #sn-drawer-title{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+  #sn-close{
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;
+    padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;
+  }
+  #sn-drawer-body{overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;}
+  #sn-drawer-body a{
+    display:block;padding:12px 18px;margin:0;color:#006A4E;text-decoration:none;
+    font-size:14px;font-family:Georgia,serif;border-bottom:1px solid #eef2f0;
+  }
+  #sn-drawer-body a:first-child{font-weight:700;}
+  #sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
+  #sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
+}
+/* === Page tools: PDF (Print) / DOCX / Print on every page === */
+#page-tools{
+  position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
+  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);
+  font-family:Georgia,serif;
+}
+#page-tools .pt-btn{
+  display:inline-flex;align-items:center;gap:6px;background:#006A4E;color:#fff;
+  border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease,background .15s ease;
+}
+#page-tools .pt-btn:hover{transform:translateY(-2px);background:#00573f;}
+@media (max-width:640px){
+  #page-tools .pt-label{display:none;}
+  #page-tools .pt-btn{padding:10px;}
+}
+@media print{
+  #page-tools,#slimnav-root,#sn-drawer,#sn-overlay,#sn-open,.site-slim-nav{display:none !important;}
+}
+`;
+}
+
+// ===== PAGE TOOLS JS (shared by static pages and built reader.js) =====
+
+export function pageToolsJs() {
+  return `
+(function () {
+  if (typeof window.__ptInit !== 'function') {
+    /* ---------- Page tools: PDF (Print) / DOCX / Print ---------- */
+    window.__ptInit = function () {
+      var root = document.getElementById('page-tools');
+      if (!root || root.dataset.ptReady === '1') return;
+      root.dataset.ptReady = '1';
+      var buttons = root.querySelectorAll('[data-pt-action]');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var action = this.getAttribute('data-pt-action');
+          if (action === 'print' || action === 'pdf') {
+            window.print();
+          } else if (action === 'docx') {
+            window.downloadDocx(this.getAttribute('data-pt-slug') || 'document');
+          }
+        });
+      }
+    };
+    window.downloadDocx = function (fallbackName) {
+      var head = '<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
+      var b = document.body.cloneNode(true);
+      var junk = ['#page-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
+      for (var j = 0; j < junk.length; j++) {
+        try {
+          var els = b.querySelectorAll(junk[j]);
+          for (var k = els.length - 1; k >= 0; k--) els[k].parentNode.removeChild(els[k]);
+        } catch (err) { /* ignore */ }
+      }
+      var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>' + head + '</head><body>' + b.innerHTML + '</body></html>';
+      var blob = new Blob(['\\ufeff' + h], { type: 'application/msword' });
+      var name = fallbackName || 'document';
+      try {
+        var m = decodeURIComponent(window.location.pathname).match(/([a-z0-9_-]+)\\/?$/i);
+        if (m && m[1] && m[1].indexOf('.htm') === -1) name = m[1];
+      } catch (err2) { /* ignore */ }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name + '.doc';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.__ptInit);
+  } else {
+    window.__ptInit();
+  }
+
+  /* ---------- Slim nav mobile drawer: open/close with "drawer & pages" ---------- */
+  function initSlimNav() {
+    var open = document.getElementById('sn-open');
+    var close = document.getElementById('sn-close');
+    var drawer = document.getElementById('sn-drawer');
+    var overlay = document.getElementById('sn-overlay');
+    if (!open || !close || !drawer || !overlay) return;
+    function show() {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      open.setAttribute('aria-expanded', 'true');
+    }
+    function hide() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      open.setAttribute('aria-expanded', 'false');
+    }
+    open.addEventListener('click', show);
+    close.addEventListener('click', hide);
+    overlay.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+    var links = drawer.querySelectorAll('#sn-drawer-body a');
+    for (var i = 0; i < links.length; i++) links[i].addEventListener('click', hide);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSlimNav);
+  } else {
+    initSlimNav();
+  }
+})();
+`;
 }
 
 // ===== SITE CSS =====
@@ -91,6 +289,7 @@ export function siteCss() {
       .page { box-shadow: none; padding: 20px; }
       @page { margin: 15mm; }
     }
+    ${chromeCss()}
   `;
 }
 
@@ -98,6 +297,7 @@ export function siteCss() {
 
 export function readerJs() {
   return `
+    ${pageToolsJs()}
     // Simple reading mode toggle
     (function() {
       const btn = document.createElement('button');
@@ -155,6 +355,8 @@ ${seoTags(page, config)}
     <a href="/">← Back to Home</a>
   </div>
 </div>
+${pageToolsHtml(page)}
+<style>${chromeCss()}</style>
 <script src="/assets/reader.js"></script>
 </body>
 </html>`;
@@ -172,9 +374,12 @@ ${seoTags(page, config)}
 <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
+${slimNav(pages, config, page.slug)}
 <div class="page">
   ${innerContent}
 </div>
+${slimNav(pages, config, page.slug)}
+${pageToolsHtml(page)}
 <script src="/assets/reader.js"></script>
 </body>
 </html>`;
@@ -199,6 +404,9 @@ export function notFoundHtml(pages, config) {
   <p style="text-align:center;font-size:16px;">The page you're looking for doesn't exist or has been moved.</p>
   <p style="text-align:center;margin-top:30px;"><a href="/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
 </div>
+${pageToolsHtml({ slug: '404' })}
+<style>${chromeCss()}</style>
+<script>${pageToolsJs()}</script>
 </body>
 </html>`;
 }
@@ -936,6 +1144,8 @@ export function catalogHtml(pages, config) {
     <p style="margin-top:5px;">Strategic Planning Unit · September 2026</p>
   </footer>
 </main>
+${pageToolsHtml({ slug: 'fertilizer-briefing' })}
+<style>${chromeCss()}</style>
 
 <script>
   const drawer = document.getElementById('drawer');
@@ -1001,6 +1211,7 @@ export function catalogHtml(pages, config) {
     });
   });
 </script>
+<script>${pageToolsJs()}</script>
 
 </body>
 </html>`;

@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { seoTags, slimNav } from "./templates.js";
+import { chromeCss, pageToolsHtml, pageToolsJs, seoTags, slimNav } from "./templates.js";
 
 export function innerHtml(html) {
   const $ = cheerio.load(String(html || ""), { decodeEntities: false });
@@ -18,8 +18,14 @@ export function injectRichHtml(html, page, pages, config) {
   $("link[rel='canonical'], meta[property^='og:'], meta[name^='twitter:'], meta[name='description'], meta[name='robots'], script[type='application/ld+json']").remove();
   $("head").append(seoTags(page, config));
   if (!$("body").length) $("html").append("<body></body>");
-  $(".site-slim-nav").remove();
+  $(".site-slim-nav, #slimnav-root").remove();
   $("body").prepend(slimNav(pages, config, page.slug));
+  // Footer-style toolbelt available on every page: PDF (Print), DOCX, Print.
+  $("#page-tools").remove();
+  $("body").append(pageToolsHtml(page));
+  $("head").append(`<style id="fertilizer-chrome-css">${chromeCss()}</style>`);
+  const chromeJs = `<script id="fertilizer-chrome-js">${pageToolsJs()}</script>`;
+  $("body").append(chromeJs);
   if ($("html").length !== 1) {
     throw new Error("rich HTML inject produced nested html");
   }
