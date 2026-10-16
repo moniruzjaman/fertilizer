@@ -6,8 +6,10 @@ export function seoTags(page, config) {
   const title = page.title || page.slug;
   const desc = page.description || '';
   
+  // No <title> here: the caller owns document title (rich pages keep their
+  // existing <title>, fragment/reader templates emit their own). Emitting one
+  // from seoTags too would produce duplicate titles after cheerio merge.
   return `
-    <title>${title}</title>
     <link rel="canonical" href="${url}">
     <meta name="description" content="${desc}">
     <meta property="og:type" content="article">
@@ -38,9 +40,14 @@ export function slimNav(pages, config, currentSlug) {
   const drawerLinks = items
     .map(p => `<a href="/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
     .join('\n        ');
+  const homeHref = '/';
 
+  // NOTE: the "site-slim-nav" class must stay on the root element — tests and
+  // downstream selectors identify the injected nav through it. The stale
+  // inline-strip removal in inject.js targets ".site-slim-nav:not(#slimnav-root)"
+  // so this freshly injected drawer is never stripped.
   return `
-    <div id="slimnav-root">
+    <div id="slimnav-root" class="site-slim-nav">
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
       <div id="sn-overlay"></div>
       <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
@@ -49,7 +56,7 @@ export function slimNav(pages, config, currentSlug) {
           <button id="sn-close" aria-label="Close page navigation">✕ Close</button>
         </div>
         <div id="sn-drawer-body">
-          <a href="/">← Home</a>
+          <a href="${homeHref}">← Home</a>
 ${drawerLinks}
         </div>
       </aside>
@@ -345,21 +352,23 @@ ${seoTags(page, config)}
     <a href="/">← Back to Home</a>
   </div>
 </div>
+${slimNav(pages, config, page.slug)}
 ${pageToolsHtml(page)}
 <style>${chromeCss()}</style>
 <script src="/assets/reader.js"></script>
+<script>${pageToolsJs()}</script>
 </body>
 </html>`;
 }
 
 // ===== FRAGMENT PAGE HTML =====
-
 export function fragmentPageHtml(page, pages, config, innerContent) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${page.title || page.slug}</title>
 ${seoTags(page, config)}
 <link rel="stylesheet" href="/assets/site.css">
 </head>
