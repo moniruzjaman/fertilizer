@@ -1,5 +1,7 @@
+import { DEFAULT_SITE_BASE } from "./config.js";
+
 export function seoTags(page, config) {
-  const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
+  const siteUrl = (config.siteUrl || config.siteBase || DEFAULT_SITE_BASE).replace(/\/+$/, '');
   const siteName = config.siteName || 'Fertilizer Management';
   const url = `${siteUrl}/${page.slug}/`;
   const img = `${siteUrl}/${page.slug}/og.png`;
@@ -34,6 +36,21 @@ export function slimNav(pages, config, currentSlug) {
 
   // The page list lives entirely inside a slide-in drawer opened/closed with
   // the "☰ drawer & pages" button, so on mobile it never covers half the
+  // screen and reading stays clutter-free. Links carry the deployment base
+  // prefix (config.siteBase + "/slug/") instead of absolute "/" paths,
+  // because GitHub Pages serves this repo under /fertilizer/ where a root-
+  // relative link would escape the project and land on a 404. Fall back to
+  // siteUrl and finally the known production base so a partially-specified
+  // config can never emit bare "/slug/" links.
+  const base = (config.siteBase || config.siteUrl || DEFAULT_SITE_BASE).replace(/\/+$/, '');
+  const drawerLinks = items
+    .map(p => `<a href="${base}/${p.slug}/"${p.slug === currentSlug ? ' class="sn-current" aria-current="page"' : ''}>${p.title || p.slug}</a>`)
+    .join('\n        ');
+  const homeHref = `${base}/`;
+
+
+  // The page list lives entirely inside a slide-in drawer opened/closed with
+  // the "☰ drawer & pages" button, so on mobile it never covers half the
   // screen and reading stays clutter-free. Links are relative to the site
   // root ("/slug/") because GitHub Pages serves this repo from /fertilizer/
   // and every generated page is wrapped at build time.
@@ -46,6 +63,13 @@ export function slimNav(pages, config, currentSlug) {
   // inject.js's stale inline-strip selector ".site-slim-nav" never removes a
   // freshly injected drawer, and fragment pages (which skip slimNav entirely)
   // provably contain no navigation markup.
+  // The top-most header bar also hosts the PDF (Print) / DOCX / Print tools
+  // (see topBarToolsHtml) so every page exposes them at the top, not only in
+  // the footer corner.
+  return `
+    <div id="slimnav-root">
+      <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
+      ${topBarToolsHtml(currentSlug)}
   return `
     <div id="slimnav-root">
       <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
@@ -64,6 +88,7 @@ ${drawerLinks}
   `;
 }
 
+// ===== PAGE TOOLS ICONS + FOOTER TOOLBELT =====
 // ===== PAGE TOOLS HTML (PDF / DOCX / PRINT — on every page footer area) =====
 
 const ptIcon = {
@@ -71,6 +96,32 @@ const ptIcon = {
   pdf: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>',
   docx: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10.5 12.5 12 17l1.5-4.5L15 17"/><path d="M10 9h.01"/></svg>'
 };
+
+// ===== SHARED PAGE-TOOLS MARKUP (PDF / DOCX / PRINT) =====
+// Canonical button markup, shared by the top-most header bar and every page.
+
+export function ptButtonsHtml(slug) {
+  return `  <button type="button" class="pt-btn" data-pt-action="pdf" title="Download PDF — opens the print dialog, choose \\"Save as PDF\\"">${ptIcon.pdf}<span class="pt-label">PDF (Print)</span></button>
+  <button type="button" class="pt-btn" data-pt-action="docx" data-pt-slug="${slug}" title="Download this document as DOCX">${ptIcon.docx}<span class="pt-label">DOCX</span></button>
+  <button type="button" class="pt-btn" data-pt-action="print" title="Print this page">${ptIcon.print}<span class="pt-label">Print</span></button>`;
+}
+
+// Top-most header bar: PDF/DOCX/Print icons on every page (rendered inside
+// slimNav so it appears at the very top of the viewport, next to the drawer
+// button).
+function topBarToolsHtml(currentSlug) {
+  return `<div id="sn-topbar-tools" aria-label="Document tools (header)">
+${ptButtonsHtml(currentSlug || 'document')}
+</div>`;
+}
+
+// The footer toolbelt is redundant now that the top-most header bar carries
+// the same PDF (Print) / DOCX / Print icons on every page (see slimNav ->
+// topBarToolsHtml). pageToolsHtml is kept as a thin wrapper so existing
+// call-sites keep working, but it renders nothing to avoid duplicate icons.
+export function pageToolsHtml(page) {
+  return '';
+}
 
 export function pageToolsHtml(page) {
   const slug = (page && page.slug) || 'document';
@@ -123,6 +174,28 @@ export function chromeCss() {
 #sn-drawer-body a:first-child{font-weight:700;}
 #sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
 #sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
+/* === Page tools: PDF (Print) / DOCX / Print — top-most header bar, every page === */
+#sn-topbar-tools{
+  position:fixed;right:14px;top:14px;z-index:10002;display:flex;gap:8px;
+  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 230px);
+  font-family:Georgia,serif;
+}
+#sn-topbar-tools .pt-btn{
+  display:inline-flex;align-items:center;gap:6px;background:#006A4E;color:#fff;
+  border:none;padding:9px 12px;border-radius:8px;font-size:13px;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease,background .15s ease;
+}
+#sn-topbar-tools .pt-btn:hover{transform:translateY(-2px);background:#00573f;}
+/* Legacy footer toolbelt (#page-tools) is redundant: the same icons now live
+   in the header bar above. Keep it hidden for any stale cached page. */
+#page-tools{display:none !important;}
+@media (max-width:640px){
+  #sn-topbar-tools .pt-label{display:none;}
+  #sn-topbar-tools .pt-btn{padding:9px;}
+  #sn-topbar-tools{max-width:calc(100vw - 170px);}
+}
+@media print{
+  #page-tools,#sn-topbar-tools,#slimnav-root,#sn-drawer,#sn-overlay,#sn-open,.site-slim-nav{display:none !important;}
 /* === Page tools: PDF (Print) / DOCX / Print on every page === */
 #page-tools{
   position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
@@ -153,6 +226,27 @@ export function pageToolsJs() {
   if (typeof window.__ptInit !== 'function') {
     /* ---------- Page tools: PDF (Print) / DOCX / Print ---------- */
     window.__ptInit = function () {
+      // Tools live in the top-most header bar (#sn-topbar-tools, injected via
+      // slimNav) and, for backwards compatibility, the legacy footer belt
+      // (#page-tools). Bind whichever exists so PDF/DOCX/Print work anywhere.
+      var roots = document.querySelectorAll('#sn-topbar-tools, #page-tools');
+      if (!roots.length) return;
+      for (var r = 0; r < roots.length; r++) {
+        if (roots[r].dataset.ptReady === '1') continue;
+        roots[r].dataset.ptReady = '1';
+        var buttons = roots[r].querySelectorAll('[data-pt-action]');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var action = this.getAttribute('data-pt-action');
+            if (action === 'print' || action === 'pdf') {
+              window.print();
+            } else if (action === 'docx') {
+              window.downloadDocx(this.getAttribute('data-pt-slug') || 'document');
+            }
+          });
+        }
       var root = document.getElementById('page-tools');
       if (!root || root.dataset.ptReady === '1') return;
       root.dataset.ptReady = '1';
@@ -173,6 +267,7 @@ export function pageToolsJs() {
     window.downloadDocx = function (fallbackName) {
       var head = '<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
       var b = document.body.cloneNode(true);
+      var junk = ['#page-tools', '#sn-topbar-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
       var junk = ['#page-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
       for (var j = 0; j < junk.length; j++) {
         try {
@@ -378,8 +473,12 @@ ${seoTags(page, config)}
   ${innerContent}
   </article>
 </div>
+${slimNav(pages, config, page.slug)}
+${pageToolsHtml(page)}
+<style>${chromeCss()}</style>
 ${pageToolsHtml(page)}
 <script src="/assets/reader.js"></script>
+<script>${pageToolsJs()}</script>
 </body>
 </html>`;
 }
@@ -401,8 +500,9 @@ export function notFoundHtml(pages, config) {
   <h1 style="font-size:48px;color:var(--red);">404</h1>
   <h2 style="border:none;text-align:center;">Page Not Found</h2>
   <p style="text-align:center;font-size:16px;">The page you're looking for doesn't exist or has been moved.</p>
-  <p style="text-align:center;margin-top:30px;"><a href="/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
+  <p style="text-align:center;margin-top:30px;"><a href="${(config.siteBase || config.siteUrl || DEFAULT_SITE_BASE).replace(/\/+$/, '')}/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
 </div>
+${slimNav(pages, config, null)}
 ${pageToolsHtml({ slug: '404' })}
 <style>${chromeCss()}</style>
 <script>${pageToolsJs()}</script>
@@ -1147,6 +1247,9 @@ export function catalogHtml(pages, config) {
     <p style="margin-top:5px;">Strategic Planning Unit · September 2026</p>
   </footer>
 </main>
+<div id="sn-topbar-tools" aria-label="Document tools (header)">
+${ptButtonsHtml('fertilizer-briefing')}
+</div>
 ${pageToolsHtml({ slug: 'fertilizer-briefing' })}
 <style>${chromeCss()}</style>
 
