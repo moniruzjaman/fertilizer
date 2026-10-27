@@ -306,6 +306,64 @@
   body.reading-mode p, body.reading-mode li { font-size: 1.25em; line-height: 1.9; }
   body.reading-mode table { font-size: 1.05em; }
   body.reading-mode .toc { display: none; }
+
+/* === Slim nav: page list lives in a slide-in drawer ("drawer & pages") === */
+#slimnav-root{position:relative;}
+#sn-open{
+  position:fixed;left:14px;top:14px;z-index:10002;
+  background:#006A4E;color:#fff;border:none;padding:9px 13px;border-radius:8px;
+  font-size:13px;font-family:Georgia,serif;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+#sn-overlay{
+  display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  z-index:10003;opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+#sn-overlay.open{opacity:1;pointer-events:auto;}
+#sn-drawer{
+  position:fixed;top:0;left:0;bottom:0;width:min(300px,85vw);z-index:10004;
+  background:#fff;box-shadow:2px 0 16px rgba(0,0,0,.25);
+  transform:translateX(-105%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#sn-drawer.open{transform:translateX(0);}
+#sn-drawer-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px;background:#006A4E;color:#fff;font-family:Georgia,serif;
+}
+#sn-drawer-title{font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+#sn-close{
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;
+  padding:6px 10px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;
+}
+#sn-drawer-body{overflow-y:auto;padding:8px 0;-webkit-overflow-scrolling:touch;}
+#sn-drawer-body a{
+  display:block;padding:12px 18px;margin:0;color:#006A4E;text-decoration:none;
+  font-size:14px;font-family:Georgia,serif;border-bottom:1px solid #eef2f0;
+}
+#sn-drawer-body a:first-child{font-weight:700;}
+#sn-drawer-body a:hover,#sn-drawer-body a:active{background:#f2f7f5;}
+#sn-drawer-body a.sn-current{color:#636e72;font-style:italic;}
+/* === Page tools: PDF (Print) / DOCX / Print on every page === */
+#page-tools{
+  position:fixed;bottom:16px;right:16px;z-index:10001;display:flex;gap:8px;
+  flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);
+  font-family:Georgia,serif;
+}
+#page-tools .pt-btn{
+  display:inline-flex;align-items:center;gap:6px;background:#006A4E;color:#fff;
+  border:none;padding:10px 14px;border-radius:8px;font-size:14px;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s ease,background .15s ease;
+}
+#page-tools .pt-btn:hover{transform:translateY(-2px);background:#00573f;}
+@media (max-width:640px){
+  #page-tools .pt-label{display:none;}
+  #page-tools .pt-btn{padding:10px;}
+}
+@media print{
+  #page-tools,#slimnav-root,#sn-drawer,#sn-overlay,#sn-open,.site-slim-nav{display:none !important;}
+}
+
 </style>
 </head>
 <body>
@@ -770,45 +828,31 @@
 
 </div>
 
-<!-- Page Tools: translate, share, auto-listen, reading mode, downloads, cross-nav -->
-<div id="page-tools" style="position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 32px);">
-  <a class="pt-btn" href="dashboard.html" title="Open interactive strategic dashboard" aria-label="Strategic Dashboard">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 13v4"/><path d="M11 9v8"/><path d="M15 5v8"/><path d="M19 3v6"/></svg>
-    <span class="pt-label">Dashboard</span>
-  </a>
-  <button type="button" class="pt-btn" id="pt-translate" title="Translate this page" aria-label="Translate this page">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-    <span class="pt-label">Translate</span>
-  </button>
-  <button type="button" class="pt-btn" id="pt-share" title="Share this page" aria-label="Share this page">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
-    <span class="pt-label">Share</span>
-  </button>
-  <button type="button" class="pt-btn" id="pt-listen" title="Auto listen — read this page aloud" aria-label="Read this page aloud" aria-pressed="false">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-    <span class="pt-label">Listen</span>
-  </button>
-  <button type="button" class="pt-btn" id="pt-readmode" title="Toggle distraction-free reading mode" aria-label="Toggle reading mode" aria-pressed="false">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-    <span class="pt-label">Reading Mode</span>
-  </button>
-  <div class="pt-menu" id="pt-dl-menu">
-    <button type="button" class="pt-btn" id="pt-download" title="Download this document as PDF or DOCX" aria-label="Download document" aria-haspopup="true" aria-expanded="false">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-      <span class="pt-label">Download</span>
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
-    </button>
-    <div class="pt-dropdown" role="menu" aria-label="Download format">
-      <button type="button" id="pt-pdf" role="menuitem">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-        Download PDF
-      </button>
-      <button type="button" id="pt-docx" role="menuitem">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10.5 12.5 12 17l1.5-4.5L15 17"/><path d="M10 9h.01"/></svg>
-        Download DOCX
-      </button>
+<!-- Page Tools: pages drawer (mobile), PDF (Print), DOCX, Print, cross-nav -->
+
+    <div id="slimnav-root">
+      <button id="sn-open" aria-controls="sn-drawer" aria-expanded="false" title="Open page navigation">☰ drawer &amp; pages</button>
+      <div id="sn-overlay"></div>
+      <aside id="sn-drawer" class="sn-pages-drawer" role="dialog" aria-modal="true" aria-label="Pages">
+        <div id="sn-drawer-head">
+          <span id="sn-drawer-title">Pages</span>
+          <button id="sn-close" aria-label="Close page navigation">✕ Close</button>
+        </div>
+        <div id="sn-drawer-body">
+          <a href="/">← Home</a>
+<a href="/briefing/">Ministerial Briefing</a>
+        <a href="/dashboard/">Strategic Dashboard</a>
+        <a href="/path-to-bloom-report/">Path to Bloom Report</a>
+        <a href="/fertilizer-security-farming-security/">From Fertilizer Security to Farming Security</a>
+        <a href="/sar-sarvabhaumer-gobhire/">সার সর্বভাউমের গোঁভিরে</a>
+        </div>
+      </aside>
     </div>
-  </div>
+  
+<div id="page-tools" aria-label="Document tools">
+  <button type="button" class="pt-btn" data-pt-action="pdf" title="Download PDF — opens the print dialog, choose \"Save as PDF\""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><span class="pt-label">PDF (Print)</span></button>
+  <button type="button" class="pt-btn" data-pt-action="docx" data-pt-slug="document" title="Download this document as DOCX"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10.5 12.5 12 17l1.5-4.5L15 17"/><path d="M10 9h.01"/></svg><span class="pt-label">DOCX</span></button>
+  <button type="button" class="pt-btn" data-pt-action="print" title="Print this page"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span class="pt-label">Print</span></button>
 </div>
 
 <!-- Google Translate element (hidden; triggered by the Translate button) -->
@@ -817,129 +861,90 @@
 </div>
 
 <script>
-/* ---------- Google Translate ---------- */
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'en',
-    includedLanguages: 'en,bn,hi,ur,ar,fr,es,zh-CN',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-  }, 'google_translate_element');
-}
-(function loadGTagScript(){
-  var s = document.createElement('script');
-  s.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-  s.async = true;
-  document.head.appendChild(s);
-})();
-document.getElementById('pt-translate').addEventListener('click', function () {
-  var bar = document.querySelector('.skiptranslate.goog-te-banner-frame');
-  if (bar && bar.style.display !== 'none') {
-    bar.style.display = 'none';               // hide again if already open
-    document.documentElement.style.top = '0px';
-    return;
+
+(function () {
+  if (typeof window.__ptInit !== 'function') {
+    /* ---------- Page tools: PDF (Print) / DOCX / Print ---------- */
+    window.__ptInit = function () {
+      var root = document.getElementById('page-tools');
+      if (!root || root.dataset.ptReady === '1') return;
+      root.dataset.ptReady = '1';
+      var buttons = root.querySelectorAll('[data-pt-action]');
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          var action = this.getAttribute('data-pt-action');
+          if (action === 'print' || action === 'pdf') {
+            window.print();
+          } else if (action === 'docx') {
+            window.downloadDocx(this.getAttribute('data-pt-slug') || 'document');
+          }
+        });
+      }
+    };
+    window.downloadDocx = function (fallbackName) {
+      var head = '<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
+      var b = document.body.cloneNode(true);
+      var junk = ['#page-tools', '#slimnav-root', '#sn-drawer', '#sn-overlay', '#sn-open', '.site-slim-nav', '.goog-te-banner-frame', '#gt-wrapper', '.goog-logo-link', '.goog-te-gadget'];
+      for (var j = 0; j < junk.length; j++) {
+        try {
+          var els = b.querySelectorAll(junk[j]);
+          for (var k = els.length - 1; k >= 0; k--) els[k].parentNode.removeChild(els[k]);
+        } catch (err) { /* ignore */ }
+      }
+      var h = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>' + head + '</head><body>' + b.innerHTML + '</body></html>';
+      var blob = new Blob(['\ufeff' + h], { type: 'application/msword' });
+      var name = fallbackName || 'document';
+      try {
+        var m = decodeURIComponent(window.location.pathname).match(/([a-z0-9_-]+)\/?$/i);
+        if (m && m[1] && m[1].indexOf('.htm') === -1) name = m[1];
+      } catch (err2) { /* ignore */ }
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name + '.doc';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    };
   }
-  var combo = document.querySelector('#google_translate_element select.goog-te-combo');
-  if (combo) {
-    document.getElementById('gt-wrapper').style.display = '';
-    combo.value = combo.value ? '' : 'bn';    // default to Bengali on first click
-    combo.dispatchEvent(new Event('change'));
-    var f = document.querySelector('.skiptranslate.goog-te-banner-frame');
-    if (f) f.style.display = 'none';          // keep the page chrome clean
-    document.documentElement.style.top = '0px';
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.__ptInit);
   } else {
-    alert('Translator is still loading — please try again in a moment.');
+    window.__ptInit();
   }
-});
 
-/* ---------- Share ---------- */
-document.getElementById('pt-share').addEventListener('click', async function () {
-  var shareData = {
-    title: document.title,
-    text: 'Fertilizer Distribution Reform — Ministerial Briefing (Ministry of Agriculture, Bangladesh)',
-    url: location.href
-  };
-  try {
-    if (navigator.share) {
-      await navigator.share(shareData);
-      return;
+  /* ---------- Slim nav mobile drawer: open/close with "drawer & pages" ---------- */
+  function initSlimNav() {
+    var open = document.getElementById('sn-open');
+    var close = document.getElementById('sn-close');
+    var drawer = document.getElementById('sn-drawer');
+    var overlay = document.getElementById('sn-overlay');
+    if (!open || !close || !drawer || !overlay) return;
+    function show() {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      open.setAttribute('aria-expanded', 'true');
     }
-  } catch (e) { /* user dismissed — fall through to clipboard */ }
-  try {
-    await navigator.clipboard.writeText(shareData.url);
-    toast('Link copied to clipboard ✓');
-  } catch (e) {
-    window.prompt('Copy this link to share:', shareData.url);
+    function hide() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      open.setAttribute('aria-expanded', 'false');
+    }
+    open.addEventListener('click', show);
+    close.addEventListener('click', hide);
+    overlay.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+    var links = drawer.querySelectorAll('#sn-drawer-body a');
+    for (var i = 0; i < links.length; i++) links[i].addEventListener('click', hide);
   }
-});
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSlimNav);
+  } else {
+    initSlimNav();
+  }
+})();
 
-/* ---------- Auto Listen (read page aloud) ---------- */
-var ptSpeaking = false;
-function collectPageText() {
-  var root = document.querySelector('.page') || document.body;
-  var clone = root.cloneNode(true);
-  clone.querySelectorAll('script,style,table,.toc,#page-tools').forEach(function (n) { n.remove(); });
-  return clone.innerText.replace(/\s+/g, ' ').trim();
-}
-function stopListening() {
-  speechSynthesis.cancel();
-  ptSpeaking = false;
-  var btn = document.getElementById('pt-listen');
-  btn.setAttribute('aria-pressed', 'false');
-  btn.classList.remove('pt-active');
-  btn.querySelector('.pt-label').textContent = 'Listen';
-}
-document.getElementById('pt-listen').addEventListener('click', function () {
-  if (!('speechSynthesis' in window)) { alert('Your browser does not support text-to-speech.'); return; }
-  if (ptSpeaking) { stopListening(); return; }
-  var u = new SpeechSynthesisUtterance(collectPageText());
-  u.lang = 'en-US'; u.rate = 1;
-  var bn = Array.from(speechSynthesis.getVoices()).find(function (v) { return /^bn/i.test(v.lang); });
-  if (bn) u.voice = bn;
-  u.onend = stopListening;
-  u.onerror = stopListening;
-  speechSynthesis.speak(u);
-  ptSpeaking = true;
-  this.setAttribute('aria-pressed', 'true');
-  this.querySelector('.pt-label').textContent = 'Stop';
-});
-
-/* ---------- Reading Mode ---------- */
-document.getElementById('pt-readmode').addEventListener('click', function () {
-  var on = document.body.classList.toggle('reading-mode');
-  this.setAttribute('aria-pressed', on ? 'true' : 'false');
-  this.querySelector('.pt-label').textContent = on ? 'Exit Reading' : 'Reading Mode';
-});
-
-/* ---------- Download menu (PDF / DOCX) ---------- */
-var dlMenu = document.getElementById('pt-dl-menu');
-document.getElementById('pt-download').addEventListener('click', function (e) {
-  e.stopPropagation();
-  var open = dlMenu.classList.toggle('open');
-  this.setAttribute('aria-expanded', open ? 'true' : 'false');
-});
-document.addEventListener('click', function () { dlMenu.classList.remove('open'); });
-document.getElementById('pt-pdf').addEventListener('click', function () { window.print(); });
-document.getElementById('pt-docx').addEventListener('click', function () { downloadDocx(); });
-
-function downloadDocx(){
-  var head='<meta charset="utf-8"><style>table{border-collapse:collapse}td,th{border:1px solid #999;padding:4px}</style>';
-  var b=document.body.cloneNode(true);var x=b.querySelector('#page-tools');if(x)x.remove();
-  var g=b.querySelector('#gt-wrapper');if(g)g.remove();
-  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head>'+head+'</head><body>'+b.innerHTML+'</body></html>';
-  var blob=new Blob(['\ufeff'+h,{type:'application/msword'}]);
-  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.doc';
-  document.body.appendChild(a);a.click();a.remove();
-}
-
-/* ---------- Toast helper ---------- */
-function toast(msg){
-  var t=document.createElement('div');
-  t.textContent=msg;
-  t.style.cssText='position:fixed;bottom:70px;right:16px;background:#14532d;color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:10001;box-shadow:0 4px 15px rgba(0,0,0,.3);font-family:Georgia,serif;';
-  document.body.appendChild(t);
-  setTimeout(function(){ t.remove(); }, 2500);
-}
 </script>
 <style>
   #page-tools .pt-btn.pt-active { background: var(--bangladesh-red); }

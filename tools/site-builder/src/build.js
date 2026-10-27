@@ -72,6 +72,54 @@ export async function collectPages(config) {
     const guessed = slugify(stem(file.filename));
     const extrasGuess = await loadPageExtras(config, guessed);
     const hasFolder = await dirExists(join(config.pagesDir, guessed));
+  // Pre-pass: read every HTML file once and resolve its metadata against the
+  // page folder matched by its filename-derived slug (content/pages/<guessed>/
+  // meta.yaml). A folder whose meta.yaml declares a *different* slug (e.g.
+  // content/pages/note-dup/meta.yaml -> slug: note) is a claim: the claiming
+  // file will emit under the desired slug, so that name must be reserved up
+  // front — otherwise another file whose guessed slug equals it would win the
+  // race and silently drop the override. Folders without meta.yaml (e.g. an
+  // og.png override in content/pages/note/) never claim anything and stay
+  // available to the file whose guessed slug matches them.
+  const infos = new Map();
+  const claims = new Set();
+  for (const file of files) {
+    if (!(file.ext === ".html" || file.ext === ".htm")) continue;
+    let text = "";
+    try {
+      text = await readFile(file.path, "utf8");
+    } catch {
+      continue;
+    }
+    if (!text.trim()) continue;
+    const guessed = slugify(stem(file.filename));
+    const extras = await loadPageExtras(config, guessed);
+    const htmlMeta = extractHtmlMeta(text);
+    const resolved = resolveMeta({ filename: file.filename, yamlMeta: extras.meta, htmlMeta });
+    infos.set(file.filename, { guessed, extras, htmlMeta, resolved });
+    if (resolved.slugOverride) {
+      const desired = slugify(resolved.slugOverride);
+      if (desired !== guessed) claims.add(desired);
+    }
+  }
+  // Reserve claimed slugs plus every file's own guessed slug, so processing
+  // order cannot steal a name a still-unprocessed file will naturally claim
+  // (note-dup.html -> "note" must not beat note.html -> "note"). Each
+  // reservation is released right before its own file runs; a claiming file
+  // releases both names because it emits under the claimed slug instead, and
+  // the suffix chain of the file that lost the race then starts at -2 (note-2).
+  const used = new Set(claims);
+  for (const file of files) {
+    used.add(slugify(stem(file.filename)));
+  }
+  const pages = [];
+  for (const file of files) {
+    const guessed = slugify(stem(file.filename));
+    const info = infos.get(file.filename);
+    used.delete(guessed);
+    if (info && info.resolved.slugOverride && slugify(info.resolved.slugOverride) !== guessed) {
+      claims.delete(guessed);
+    }
     let html = "";
     let pdfMetaRaw = {};
     if (file.ext === ".html" || file.ext === ".htm") {
@@ -83,6 +131,7 @@ export async function collectPages(config) {
     } else {
       pdfMetaRaw = await readPdfMeta(file.path);
     }
+    const extrasGuess = info ? info.extras : await loadPageExtras(config, guessed);
     const htmlMeta = html ? extractHtmlMeta(html) : {};
     const pdfMeta = {
       title: pdfMetaRaw.Title,

@@ -17,10 +17,15 @@ export function defaultRoot(cwd = process.cwd()) {
 
 export function getConfig(options = {}) {
   const root = resolve(options.root || defaultRoot());
+  const siteBase = String(options.siteBase || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, "");
   return {
     root,
     siteBase: String(options.siteBase || options.siteUrl || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, ""),
     siteName: options.siteName || DEFAULT_SITE_NAME,
+    siteBase,
+    // templates consume `siteUrl`; keep it in sync with `siteBase` so every
+    // build-time SEO/canonical/sitemap URL derives from the same source.
+    siteUrl: options.siteUrl ? String(options.siteUrl).replace(/\/+$/, "") : siteBase,
     inboxDir: options.inboxDir || join(root, "content", "inbox"),
     pagesDir: options.pagesDir || join(root, "content", "pages"),
     outDir: options.outDir || join(root, "site"),
