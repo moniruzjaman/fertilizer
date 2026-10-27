@@ -1,3 +1,5 @@
+const bp = (config) => ((config && config.basePath) || "") + "/";
+
 export function seoTags(page, config) {
   const siteUrl = config.siteUrl || 'https://moniruzjaman.github.io/fertilizer';
   const siteName = config.siteName || 'Fertilizer Management';
@@ -322,13 +324,14 @@ export function readerJs() {
 // ===== PDF READER HTML =====
 
 export function pdfReaderHtml(page, pages, config) {
+  const basePath = bp(config);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 ${seoTags(page, config)}
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="${basePath}assets/site.css">
 <style>
   .pdf-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
   .pdf-header { margin-bottom: 30px; }
@@ -352,16 +355,16 @@ ${seoTags(page, config)}
       ${page.date ? `<p>Published: ${new Date(page.date).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}</p>` : ''}
     </div>
   </div>
-  <iframe class="pdf-frame" src="/files/${page.slug}.pdf" title="${page.title || page.slug}"></iframe>
+  <iframe class="pdf-frame" src="${basePath}files/${page.slug}.pdf" title="${page.title || page.slug}"></iframe>
   <div class="pdf-actions">
-    <a href="/files/${page.slug}.pdf" download>⬇ Download PDF</a>
-    <a href="/">← Back to Home</a>
+    <a href="${basePath}files/${page.slug}.pdf" download>⬇ Download PDF</a>
+    <a href="${basePath}">← Back to Home</a>
   </div>
 </div>
 ${slimNav(pages, config, page.slug)}
 ${pageToolsHtml(page)}
 <style>${chromeCss()}</style>
-<script src="/assets/reader.js"></script>
+<script src="${basePath}assets/reader.js"></script>
 <script>${pageToolsJs()}</script>
 </body>
 </html>`;
@@ -369,6 +372,7 @@ ${pageToolsHtml(page)}
 
 // ===== FRAGMENT PAGE HTML =====
 export function fragmentPageHtml(page, pages, config, innerContent) {
+  const basePath = bp(config);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -376,7 +380,7 @@ export function fragmentPageHtml(page, pages, config, innerContent) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${page.title || page.slug}</title>
 ${seoTags(page, config)}
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="${basePath}assets/site.css">
 </head>
 <body>
 <div class="page">
@@ -385,7 +389,7 @@ ${seoTags(page, config)}
   </article>
 </div>
 ${pageToolsHtml(page)}
-<script src="/assets/reader.js"></script>
+<script src="${basePath}assets/reader.js"></script>
 </body>
 </html>`;
 }
@@ -393,6 +397,7 @@ ${pageToolsHtml(page)}
 // ===== NOT FOUND HTML =====
 
 export function notFoundHtml(pages, config) {
+  const basePath = bp(config);
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -400,14 +405,14 @@ export function notFoundHtml(pages, config) {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 — Page Not Found</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="${basePath}assets/site.css">
 </head>
 <body>
 <div class="page" style="text-align:center;padding:80px 40px;">
   <h1 style="font-size:48px;color:var(--red);">404</h1>
   <h2 style="border:none;text-align:center;">Page Not Found</h2>
   <p style="text-align:center;font-size:16px;">The page you're looking for doesn't exist or has been moved.</p>
-  <p style="text-align:center;margin-top:30px;"><a href="${(config && config.siteUrl) || ''}/" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
+  <p style="text-align:center;margin-top:30px;"><a href="${basePath}" style="background:var(--green);color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">← Return to Home</a></p>
 </div>
 ${slimNav(pages, config, '')}
 ${pageToolsHtml({ slug: '404' })}
@@ -502,6 +507,7 @@ function innerHtmlLegacy(html) {
 // ===== CATALOG HTML (NEW DRAWER VERSION) =====
 
 export function catalogHtml(pages, config) {
+  const basePath = bp(config);
   const sorted = [...pages].sort((a, b) => {
     if (a.date && b.date) return b.date.localeCompare(a.date);
     if (a.date) return -1;
@@ -542,9 +548,9 @@ export function catalogHtml(pages, config) {
 <meta name="description" content="Ministry of Agriculture strategic briefings, dashboards, and reform documents for Bangladesh's fertilizer distribution system.">
 <meta name="theme-color" content="#006A4E">
 <link rel="canonical" href="${(config.siteUrl || 'https://moniruzjaman.github.io/fertilizer')}/">
-<link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
-<link rel="icon" type="image/svg+xml" href="/logo.svg">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="${basePath}favicon.png">
+<link rel="icon" type="image/svg+xml" href="${basePath}logo.svg">
+<link rel="apple-touch-icon" href="${basePath}apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Fertilizer Management — Burden to Bloom">
 <meta property="og:title" content="Fertilizer Management — Burden to Bloom">

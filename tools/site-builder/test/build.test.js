@@ -76,14 +76,11 @@ describe("fixture build", () => {
     assert.match(note, /Fragment Note/);
     assert.match(note, /article class="prose"/);
 
-    const dash = await readFile(join(outDir, "dashboard.html"), "utf8");
-    assert.match(dash, /\.\/dashboard\//);
-
-    const fert = await readFile(join(outDir, "fertilizer.html"), "utf8");
-    assert.match(fert, /url=\.\//);
-
-    const long = await readFile(join(outDir, "Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html"), "utf8");
-    assert.match(long, /\.\/briefing\//);
+    // Legacy *.html redirect stubs are no longer emitted at the site root;
+    // redirects are declared via content/pages/<slug>/redirect.yaml instead.
+    await assert.rejects(stat(join(outDir, "dashboard.html")));
+    await assert.rejects(stat(join(outDir, "fertilizer.html")));
+    await assert.rejects(stat(join(outDir, "Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html")));
 
     const redir = await readFile(join(outDir, "old-name", "index.html"), "utf8");
     assert.match(redir, /\.\.\/briefing\//);

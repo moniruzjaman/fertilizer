@@ -172,6 +172,16 @@ export async function emitSite(config, pages) {
   await writeFile(join(config.outDir, "assets", "reader.js"), readerJs());
   await copyPdfJs(config.outDir);
 
+  // Copy brand assets (favicon, logo, social preview) from the repo root so
+  // the site is self-contained; missing files are skipped silently.
+  for (const name of ["favicon.png", "logo.svg", "apple-touch-icon.png", "social-preview.png"]) {
+    try {
+      await cp(join(config.root, name), join(config.outDir, name));
+    } catch {
+      /* optional asset not present */
+    }
+  }
+
   for (const page of pages) {
     const dir = join(config.outDir, page.slug);
     await mkdir(dir, { recursive: true });
@@ -198,18 +208,15 @@ export async function emitSite(config, pages) {
 
   await writeFile(join(config.outDir, "index.html"), catalogHtml(pages, config));
   await writeFile(join(config.outDir, "404.html"), notFoundHtml(pages, config));
-  await writeFile(join(config.outDir, "fertilizer.html"), redirectHtml("./", "Fertilizer"));
-  await writeFile(join(config.outDir, "dashboard.html"), redirectHtml("./dashboard/", "Dashboard"));
-  await writeFile(
-    join(config.outDir, "Fertilizer_Distribution_Reform_Report_Ministerial_Briefing.html"),
-    redirectHtml("./briefing/", "Briefing")
-  );
   await writeFile(join(config.outDir, "sitemap.xml"), sitemapXml(pages, config));
   await writeFile(join(config.outDir, "robots.txt"), robotsTxt(config));
 
   const redirects = await scanRedirects(config);
   for (const redir of redirects) {
-    if (pages.some((p) => p.slug === redir.from)) continue;
+    // A page directory holding only redirect.yaml (no inbox file) declares a
+    // pure redirect: its URL is replaced by the target. If an inbox page shares
+    // the slug, the inbox content wins and no redirect is emitted.
+    if (pages.some((p) => p.slug === redir.from && !p.noindex)) continue;
     const dest = `../${redir.to}/`;
     await mkdir(join(config.outDir, redir.from), { recursive: true });
     await writeFile(join(config.outDir, redir.from, "index.html"), redirectHtml(dest, "Redirecting"));

@@ -17,9 +17,19 @@ export function defaultRoot(cwd = process.cwd()) {
 export function getConfig(options = {}) {
   const root = resolve(options.root || defaultRoot());
   const siteBase = String(options.siteBase || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, "");
+  // Root-relative path prefix for a project site (e.g. GitHub Pages
+  // /<repo>/); empty for domain-root deploys. Used for asset links.
+  let basePath = "";
+  try {
+    const u = new URL(siteBase);
+    basePath = u.pathname.replace(/\/+$/, "");
+  } catch {
+    /* not an absolute URL: leave basePath empty */
+  }
   return {
     root,
     siteBase,
+    basePath,
     // templates consume `siteUrl`; keep it in sync with `siteBase` so every
     // build-time SEO/canonical/sitemap URL derives from the same source.
     siteUrl: options.siteUrl ? String(options.siteUrl).replace(/\/+$/, "") : siteBase,
