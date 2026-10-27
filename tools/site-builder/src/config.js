@@ -47,6 +47,12 @@ export function pageUrl(config, slug) {
   return `${config.siteBase}/${slug}/`;
 }
 
+// Shortest URL that still resolves to the page (drops the trailing slash),
+// keeping QR payloads small enough for low versions with high EC capacity.
+export function qrTargetUrl(config, slug) {
+  return `${config.siteBase}/${slug}`;
+}
+
 export function ogUrl(config, slug) {
   return `${config.siteBase}/${slug}/og.png`;
 }
