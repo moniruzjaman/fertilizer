@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 export const DEFAULT_SITE_BASE = "https://moniruzjaman.github.io/fertilizer";
+export const DEFAULT_SITE_NAME = "Fertilizer Management";
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
@@ -19,6 +20,8 @@ export function getConfig(options = {}) {
   const siteBase = String(options.siteBase || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, "");
   return {
     root,
+    siteBase: String(options.siteBase || options.siteUrl || process.env.SITE_BASE || DEFAULT_SITE_BASE).replace(/\/+$/, ""),
+    siteName: options.siteName || DEFAULT_SITE_NAME,
     siteBase,
     // templates consume `siteUrl`; keep it in sync with `siteBase` so every
     // build-time SEO/canonical/sitemap URL derives from the same source.
