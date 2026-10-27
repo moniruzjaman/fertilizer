@@ -2,7 +2,7 @@ import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classify } from "./classify.js";
-import { warn } from "./config.js";
+import { pageUrl, qrTargetUrl, warn } from "./config.js";
 import { injectRichHtml, innerHtml } from "./inject.js";
 import { extractHtmlMeta, extractPdfMeta, resolveMeta } from "./meta.js";
 import { rasterPdfFirstPage, writeOgPng } from "./og.js";
@@ -202,7 +202,10 @@ export async function emitSite(config, pages) {
     await writeFile(join(dir, "index.html"), htmlOut);
     await writeOgPng(join(dir, "og.png"), page, config, {
       overridePath: page.extras.ogPath,
-      thumbBuffer: thumb
+      thumbBuffer: thumb,
+      // Pages without a visual (no PDF first page / screenshot) get a QR of
+      // their absolute URL in the empty slot so cards are scannable links.
+      qrUrl: qrTargetUrl(config, page.slug)
     });
   }
 
