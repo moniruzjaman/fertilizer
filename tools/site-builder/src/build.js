@@ -172,6 +172,16 @@ export async function emitSite(config, pages) {
   await writeFile(join(config.outDir, "assets", "reader.js"), readerJs());
   await copyPdfJs(config.outDir);
 
+  // Copy brand assets (favicon, logo, social preview) from the repo root so
+  // the site is self-contained; missing files are skipped silently.
+  for (const name of ["favicon.png", "logo.svg", "apple-touch-icon.png", "social-preview.png"]) {
+    try {
+      await cp(join(config.root, name), join(config.outDir, name));
+    } catch {
+      /* optional asset not present */
+    }
+  }
+
   for (const page of pages) {
     const dir = join(config.outDir, page.slug);
     await mkdir(dir, { recursive: true });
